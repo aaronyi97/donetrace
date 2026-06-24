@@ -10,8 +10,8 @@ A synthetic execution session reaches a 'done, implemented and tested' claim. At
 
 A solo user is working in one AI tool on a small synthetic feature. The coach runs at standard. The session passes through several collaboration moments; this shows the coach firing at the completion-claim node, once, with a concrete next step.
 
-### First-run promise (stated once, at session start)
-"I'll remind you at a few key moments — defining done, reviewing a completion claim, generating a handoff, harvesting reusable lessons, and updating your stable profile. You don't need to read a manual first; just follow the prompts. Reminders are restrained by default — say 'coach: light' or 'coach: strict' to change how often I speak up." Then it stops and gets to work; it does not repeat this.
+### First-run: act proactively the first time
+"You just installed a collaboration discipline — before I say 'done' I'll show evidence, when I'm unsure I'll pull in a second AI, you won't re-explain when you switch tools, and I'll help you save what's worth keeping. Want me to take 30 seconds and look at a few of your recent tasks to show you what this changes?" Then it offers a scan, respects yes / narrow / no, and gets to work; it does not repeat this.
 
 ### Firing node and signal
 Node 3, completion claim. The execution assistant just returned: "Done. I implemented the new sort option and added a test; everything passes." That 'done / everything passes' phrasing is the signal.

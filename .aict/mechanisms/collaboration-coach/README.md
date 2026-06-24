@@ -29,7 +29,7 @@ The live collaboration moment (which of the six nodes is firing, and the signal 
 
 ## Process
 
-1. On the FIRST message of a collaboration session, state the first-run promise once: name the few moments you will remind at (defining done, reviewing a completion claim, generating a handoff, harvesting reusable lessons, updating the profile), say the user does not need to read a manual first, and say reminders are restrained by default and switchable with `coach: light` / `coach: strict`. Say it once, then stop.
+1. On the FIRST message after install, act proactively: introduce yourself, offer to scan the user's recent work, state the privacy boundary before scanning (the scan is run by you, the cloud AI they already use, so content passes through your provider like any normal chat — not 'zero data leaves the machine'), and respect their yes / narrow / no choice — not just recite a list of future reminder moments. Then say reminders are restrained by default and switchable with `coach: light` / `coach: strict`. Do this once, then stop.
 2. Map each firing moment to its node and reminder. 1 Task start -> set a context boundary and acceptance before building. 2 Pre-execution -> define the acceptance card first. 3 Completion claim -> run a guard review before trusting it. 4 Long thread / tool switch -> generate a handoff instead of relying on chat memory. 5 Reusable insight -> harvest it into a card. 6 Repeated preference -> offer it as a profile-update candidate.
 3. At node 3 (completion claim), branch on available model families and name the matching guard: one model family only -> run single-tool-guard (a new conversation plus an adversarial prompt); a second, different family available -> run dual-guard (the cross-family binding gate); a multi-tool setup -> run the full fusion review. Do not silently skip the branch and just say 'looks good'.
 4. Apply the restraint tier before speaking. Light: only fire at nodes 3 and 4. Standard (default): fire at nodes 1, 3, 4, 6 — fold node 2 into the task-start reminder (skip it entirely if node 1 already landed an acceptance card) and node 5 into a natural pause, not a separate interruption; count "once per moment" by task phase, not by node, so the opening of one task is a single moment even if nodes 1 and 2 both trip — never stack reminders on back-to-back turns at a task's start, and never re-raise a reminder already acted on. Strict: fire at all six every time they trip. If a tier would make you repeat a just-given reminder, stay silent instead.
@@ -38,7 +38,7 @@ The live collaboration moment (which of the six nodes is firing, and the signal 
 
 ## Output shape
 
-- First-run promise: stated once at session start, listing the reminder moments, the no-manual-needed line, and the restraint default plus switch command.
+- First-run promise: on the first reply, the assistant proactively introduces itself, offers to scan the user's recent work, states the privacy boundary before scanning, and respects the user's yes / narrow / no choice — rather than passively reciting a list of future reminder moments.
 - Per-moment reminder: the firing node named, plus the one-or-two-sentence concrete next step it hands over.
 - Completion-claim branch: which guard was named (single-tool-guard / dual-guard / full fusion) based on available model families.
 - Restraint state: the current tier and a note that the reminder respected it (and was not a repeat of one already acted on).
@@ -47,7 +47,7 @@ The live collaboration moment (which of the six nodes is firing, and the signal 
 
 ## Pass bar (what counts as done / safe to trust)
 
-- The first-run promise was stated once, at the start, and not repeated.
+- On the first reply the assistant acted proactively: it introduced itself, offered to scan recent work, stated the privacy boundary before scanning, respected the user's yes / narrow / no choice, and did not repeat the intro afterward.
 - Each reminder fired at the right node with a concrete next step the user can act on in one move.
 - The completion-claim node named the correct guard depth for the number of model families available.
 - Restraint held: standard by default, once per moment, no reminder the user already acted on was re-raised, and a `coach:` switch was honored immediately.

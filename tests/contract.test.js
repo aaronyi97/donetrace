@@ -19,7 +19,7 @@ import {
   checkDoneRequiresEvidence
 } from "../src/validate.js";
 import { receiptStatusFor, ownedEvidenceIds, computeCapability, distinctNamedFamilies, buildHandoffModel, confirmedProfileLearnings, computeReceiptGuardLevel } from "../src/ledger.js";
-import { buildBootstrapModel, parseRepeatedlyTouchedFiles, scanLocalStructure } from "../src/bootstrap.js";
+import { buildBootstrapModel, parseRepeatedlyTouchedFiles, scanLocalStructure, buildProfileCard, buildRolesCard, renderBootstrapReport } from "../src/bootstrap.js";
 import { redactSnippet, parseDialogueExports, extractDialogueSignals, scanDialogueAndLogs } from "../src/dialogue.js";
 import {
   collectRedactedSnippets,
@@ -171,11 +171,19 @@ test("bin CLI supports first-run UX without unsafe fallbacks", () => {
 
   // --dry-run writes nothing, so a target-less preview must succeed (not error)
   // and must still write no files; only a real (writing) init demands --target.
+  // Assert the dry run does not CHANGE whether repoRoot/my-ai-workspace exists,
+  // instead of asserting it is absent outright. A user who already followed the
+  // README's `init --target ./my-ai-workspace` legitimately has that directory, and
+  // a dry run must neither create nor delete it. Snapshotting before/after keeps the
+  // original "no unsafe fallback write" guarantee without assuming a pristine repo
+  // root (which the documented first-run command would otherwise make false).
+  const defaultTargetDir = path.join(repoRoot, "my-ai-workspace");
+  const defaultTargetExistedBefore = existsSync(defaultTargetDir);
   const dryRunNoTarget = runResult(["bin/ai-collab.js", "init", "--dry-run"]);
   assert.equal(dryRunNoTarget.status, 0);
   assert.match(dryRunNoTarget.stdout, /Dry run/i);
   assert.match(dryRunNoTarget.stdout, /Files planned/i);
-  assert.equal(existsSync(path.join(repoRoot, "my-ai-workspace")), false);
+  assert.equal(existsSync(defaultTargetDir), defaultTargetExistedBefore);
   const dryRunNoTargetJson = JSON.parse(
     runResult(["bin/ai-collab.js", "init", "--dry-run", "--json"]).stdout
   );
@@ -1519,6 +1527,19 @@ test("privacy scanner catches common token, email, and local path leaks", () => 
     `Windows path: ${"C:"}${"\\"}Users${"\\"}Alex${"\\"}PrivateProject${"\\"}file.md\n`,
     "utf8"
   );
+  // Home-directory path VARIANTS (env-var home + tilde home subtree). Each is a real
+  // leaked local path and must trip the generic "local machine path" rule. The
+  // literals are fragmented so this scanned test file holds no whole path token.
+  writeFileSync(
+    path.join(fixture, "variants.md"),
+    [
+      `Posix env home: ${"$"}HOME/${"Documents"}/private-notes.md`,
+      `Braced env home: ${"$"}{HOME}/${"Desktop"}/RealClient/contract.md`,
+      `Windows env home: ${"%USERPROFILE%"}${"\\"}Documents${"\\"}private.md`,
+      `Tilde home subtree: ${"~"}/${"Projects"}/SecretMigration/file.js`
+    ].join("\n"),
+    "utf8"
+  );
 
   const result = runResult(["scripts/privacy-scan.js", "--workspace", fixture]);
   assert.notEqual(result.status, 0);
@@ -1527,6 +1548,8 @@ test("privacy scanner catches common token, email, and local path leaks", () => 
   }
   assert.match(result.stderr, /\.cursor\/rules\/leak\.mdc/);
   assert.match(result.stderr, /\.clinerules/);
+  // The new home-path variants are reported as "local machine path" on variants.md.
+  assert.match(result.stderr, /variants\.md.*local machine path/);
 });
 
 // Drift guard for the documentation SUMMARY surfaces.
@@ -6164,7 +6187,8 @@ test("handoff create surfaces in status and is documented in help; unknown subco
 // === bootstrap (first-experience value report) ==============================
 //
 // bootstrap reads the user's OWN recent work and prints an "AI collaboration
-// baseline" — three cards (VERIFY / RESUME / HARVEST). The whole point is HONESTY:
+// baseline" — five cards (PROFILE CLUES / VERIFY / RESUME / ROLES / HARVEST). The
+// whole point is HONESTY:
 // a completion claim is never shown as verified/done unless the ledger's own honest
 // functions say so; HARVEST candidates are proposed; the shipped seed is never
 // counted as the user's result; and the report-only v1 writes NOTHING. These tests
@@ -6465,11 +6489,199 @@ test("bootstrap: parseRepeatedlyTouchedFiles counts distinct commits per file an
   assert.deepEqual(parseRepeatedlyTouchedFiles(undefined), []);
 });
 
+// === bootstrap Part A: the two DETERMINISTIC cards (profile clues + roles) =====
+//
+// The architectural red line for both cards: they may list only CONCRETE,
+// machine-observable facts the user can recognise (a detected tool, a file
+// extension, a keyword that literally appears in a title) — NEVER a semantic verdict
+// ("you prefer X", "you value Y", "this work IS risky"). bootstrap is report-only:
+// no model, no profile write, no network. These tests assert the cards carry
+// evidence + the explicit no-conclusion flag, degrade honestly with no signal, and
+// never count the shipped seed as the user's own work.
+
+// A minimal scan fixture for the pure-unit card builders (they read only the scan
+// shape scanLocalStructure produces — detectedTools, recentlyModified, packageJson).
+function fakeScan({ detectedTools = [], recentlyModified = [], testScript = null, pkgPresent = true } = {}) {
+  return {
+    repoRoot: "/tmp/fake",
+    // git is always populated by the real scanLocalStructure; the RESUME card reads
+    // it, so the fixture mirrors the empty-but-present shape (no churn, clean tree).
+    git: { available: false, isRepo: false, root: null, hasUncommittedChanges: false, diffStat: "", repeatedlyTouched: [] },
+    ai: { detectedTools, instructionFiles: [] },
+    recentlyModified,
+    packageJson: { present: pkgPresent, scripts: testScript ? ["test"] : [], testScript }
+  };
+}
+
+test("bootstrap Part A: buildProfileCard lists deterministic signals (tools, file types, test script) and draws NO semantic conclusion", () => {
+  const card = buildProfileCard(fakeScan({
+    detectedTools: ["claude", "cursor"],
+    recentlyModified: ["app.ts", "db.sql", "notes.ts", "Makefile"],
+    testScript: "node --test"
+  }));
+
+  // Detected tools are surfaced as a FACT; >= 2 is flagged as a cross-tool signal.
+  assert.deepEqual(card.detectedTools, ["claude", "cursor"], "the detected tools are carried verbatim");
+  assert.equal(card.multiTool, true, "two tools set the cross-tool (multiTool) signal");
+
+  // The file-type distribution is a deterministic ext count (a .ts ×2, .sql ×1, and
+  // the extensionless Makefile bucketed honestly under '(no ext)').
+  const byExt = new Map(card.fileTypes.map((f) => [f.ext, f.count]));
+  assert.equal(byExt.get(".ts"), 2, "two .ts files are counted");
+  assert.equal(byExt.get(".sql"), 1, "one .sql file is counted");
+  assert.equal(byExt.get("(no ext)"), 1, "an extensionless file is bucketed under (no ext), not dropped");
+
+  // The test-script presence is a fact, not "you value testing" as a verdict.
+  assert.equal(card.hasTestScript, true, "a package.json test script is detected as a signal");
+
+  // THE RED LINE: the card explicitly draws no semantic conclusion.
+  assert.equal(card.semanticConclusion, false, "buildProfileCard must NEVER mark a semantic conclusion (report-only)");
+
+  // The rendered text states the clues + the fixed honesty footer, and contains no
+  // verdict phrasing ("you prefer/you like/you are a ...").
+  const scan = fakeScan({ detectedTools: ["claude", "cursor"], recentlyModified: ["app.ts", "db.sql"], testScript: "node --test" });
+  // One real (non-seed) task so hasOwnData is true and the cards render (an empty
+  // ledger short-circuits to the honest "no data yet" block instead of the cards).
+  const model = buildBootstrapModel({
+    ledgers: { tasks: [{ id: "t1", title: "Tidy the home page", status: "open", createdAt: "2026-06-01T00:00:00.000Z" }] },
+    scan
+  });
+  const text = renderBootstrapReport(model, "en");
+  assert.match(text, /PROFILE CLUES/, "the profile card has a title");
+  assert.match(text, /clues, not conclusions/i, "the profile card states the no-conclusion footer");
+  assert.doesNotMatch(text, /you (prefer|like|are a|tend to|usually)\b/i, "the profile card never phrases a semantic verdict");
+});
+
+test("bootstrap Part A: buildProfileCard degrades honestly with no signals (no tools, no files) and still draws no conclusion", () => {
+  const card = buildProfileCard(fakeScan({ detectedTools: [], recentlyModified: [], testScript: null }));
+  assert.deepEqual(card.detectedTools, [], "no tools detected -> empty list, not a guess");
+  assert.equal(card.multiTool, false, "no cross-tool signal with zero tools");
+  assert.deepEqual(card.fileTypes, [], "no recent files -> empty distribution");
+  assert.equal(card.hasTestScript, false, "no test script -> false, not assumed");
+  assert.equal(card.semanticConclusion, false, "still no semantic conclusion when there is nothing to show");
+});
+
+test("bootstrap Part A: buildRolesCard maps high-risk KEYWORDS in task titles + file paths to EXISTING roles, with the matched evidence and no risk verdict", () => {
+  const tasks = [
+    { id: "t1", title: "Refactor payment callback", createdAt: "2026-06-01T00:00:00.000Z" },
+    { id: "t2", title: "Tidy the footer styles", createdAt: "2026-06-01T00:00:00.000Z" }
+  ];
+  // Real scanRecentlyModified returns BASENAMES only (single-level readdir, never a
+  // dir-prefixed path), so the fixture uses basenames to stay faithful to the scan.
+  const scan = fakeScan({ recentlyModified: ["login.ts", "README.md"] });
+  const card = buildRolesCard(tasks, scan);
+
+  assert.equal(card.hasHighRisk, true, "a payment/login title+file is a high-risk match");
+  assert.equal(card.semanticConclusion, false, "buildRolesCard must NEVER decide the work IS risky (only that a high-risk WORD appears)");
+
+  // Each hit carries the matched evidence (the exact subject + the literal keyword).
+  const paymentHit = card.hits.find((h) => h.subject === "Refactor payment callback");
+  assert.ok(paymentHit, "the payment task is a hit");
+  assert.equal(paymentHit.keyword, "payment", "the hit names the literal keyword that matched");
+  assert.equal(paymentHit.source, "task", "a title hit is sourced as a task");
+  const loginHit = card.hits.find((h) => h.subject === "login.ts");
+  assert.ok(loginHit, "the login file is a hit");
+  assert.equal(loginHit.keyword, "login", "the file hit names the literal keyword");
+  assert.equal(loginHit.source, "file", "a file-path hit is sourced as a file");
+
+  // The non-risky task and the README are NOT hits (no false positives).
+  assert.ok(!card.hits.some((h) => h.subject === "Tidy the footer styles"), "a benign title is not a hit");
+  assert.ok(!card.hits.some((h) => h.subject === "README.md"), "a benign file is not a hit");
+
+  // The suggested roles are ones that ACTUALLY ship in the open-source workspace
+  // (.aict/skills/ + .aict/mechanisms/) — never an invented role name. `repoRoot` is
+  // the module-level constant (the repo root) already defined at the top of this file.
+  const allRoleIds = new Set(card.roles.map((r) => r.id));
+  for (const id of allRoleIds) {
+    const inSkills = existsSync(path.join(repoRoot, ".aict", "skills", id));
+    const inMechanisms = existsSync(path.join(repoRoot, ".aict", "mechanisms", id));
+    assert.ok(inSkills || inMechanisms, `suggested role "${id}" must exist as a shipped role package (skills/ or mechanisms/)`);
+  }
+  // payment/auth -> red-team + dual-guard are present.
+  assert.ok(allRoleIds.has("red-team") && allRoleIds.has("dual-guard"), "money/auth keywords suggest red-team + dual-guard");
+});
+
+test("bootstrap Part A: buildRolesCard is honest with NO high-risk match, EXCLUDES the shipped seed, and caps suggestions at top 3", () => {
+  // (a) No high-risk word anywhere -> honest no-match, never a manufactured suggestion.
+  const benign = buildRolesCard(
+    [{ id: "t1", title: "Polish the about page", createdAt: "2026-06-01T00:00:00.000Z" }],
+    fakeScan({ recentlyModified: ["styles.css", "about.md"] })
+  );
+  assert.equal(benign.hasHighRisk, false, "no high-risk keyword -> hasHighRisk:false");
+  assert.deepEqual(benign.hits, [], "no hits are invented");
+  assert.deepEqual(benign.roles, [], "no roles suggested when nothing matched");
+  const benignText = renderBootstrapReport(buildBootstrapModel({
+    ledgers: { tasks: [{ id: "t1", title: "Polish the about page", status: "open", createdAt: "2026-06-01T00:00:00.000Z" }] },
+    scan: fakeScan({ recentlyModified: ["styles.css"] })
+  }), "en");
+  assert.match(benignText, /No high-risk keywords matched/i, "the roles card honestly states the keyword-scan fact, not a low-risk verdict");
+  assert.match(benignText, /not a verdict that the work is low-risk/i, "the no-match copy explicitly disclaims a low-risk verdict (no semantic leap)");
+  assert.doesNotMatch(benignText, /routine work|one tool is enough/i, "the old semantic-leap phrasing is gone");
+
+  // (b) The shipped SEED task (t0 + the synthetic timestamp) carries 'payment'-like
+  // risk words in the example, but it is NOT the user's work — it must never produce
+  // a role suggestion. The synthetic seed timestamp is the fixed SYNTHETIC_SEED_TS
+  // value isSeedRow keys on (kept inline so this test adds no new import).
+  const seedTask = { id: "t0", title: "Add payment auth login token", createdAt: "2026-01-01T00:00:00.000Z" };
+  const seedCard = buildRolesCard([seedTask], fakeScan({ recentlyModified: [] }));
+  assert.equal(seedCard.hasHighRisk, false, "the shipped seed task never manufactures a roles suggestion");
+  assert.deepEqual(seedCard.hits, [], "no hits derive from the seed");
+
+  // (c) Many high-risk tasks -> suggestions are capped at top 3 (no bombardment).
+  const many = buildRolesCard([
+    { id: "t1", title: "auth one", createdAt: "2026-06-01T00:00:00.000Z" },
+    { id: "t2", title: "payment two", createdAt: "2026-06-01T00:00:00.000Z" },
+    { id: "t3", title: "deploy three", createdAt: "2026-06-01T00:00:00.000Z" },
+    { id: "t4", title: "crypto four", createdAt: "2026-06-01T00:00:00.000Z" },
+    { id: "t5", title: "schema five", createdAt: "2026-06-01T00:00:00.000Z" }
+  ], fakeScan({ recentlyModified: [] }));
+  assert.equal(many.hits.length, 3, "at most the top 3 high-risk items are listed (no bombardment)");
+  assert.equal(many.semanticConclusion, false, "still no semantic conclusion under many matches");
+});
+
+test("bootstrap Part A: the CLI renders FIVE cards in order (profile->VERIFY->RESUME->roles->HARVEST) and --json keeps English field names", () => {
+  // A real workspace with a high-risk task so the roles card has content.
+  const ws = initHandoffWorkspace("bootstrap-five-cards");
+  makeTask(ws, "Wire the payment webhook");
+
+  const text = runCli(["bootstrap", "--workspace", ws, "--yes"]);
+  // All five card headers appear, in the required order.
+  const iProfile = text.indexOf("PROFILE CLUES");
+  const iVerify = text.indexOf("VERIFY");
+  const iResume = text.indexOf("RESUME");
+  const iRoles = text.indexOf("ROLES TO CONSIDER");
+  const iHarvest = text.indexOf("HARVEST");
+  for (const [label, idx] of [["profile", iProfile], ["verify", iVerify], ["resume", iResume], ["roles", iRoles], ["harvest", iHarvest]]) {
+    assert.ok(idx >= 0, `the ${label} card must be present`);
+  }
+  assert.ok(iProfile < iVerify && iVerify < iResume && iResume < iRoles && iRoles < iHarvest,
+    "cards render in order: profile -> VERIFY -> RESUME -> roles -> HARVEST");
+  // The high-risk roles hint is appended to the Next block (advisory, not a write).
+  assert.match(text, /high-risk keywords showed up in your work/i, "a high-risk match adds the roles hint to Next");
+
+  // --json: the new cards are present with STABLE English field names (the data
+  // contract stays English even though display is localizable).
+  const out = runJson(["bootstrap", "--workspace", ws, "--yes", "--json"]);
+  assert.ok(out.cards.profile, "--json carries the profile card");
+  assert.ok(out.cards.roles, "--json carries the roles card");
+  assert.equal(out.cards.profile.semanticConclusion, false, "--json profile card asserts no semantic conclusion");
+  assert.equal(out.cards.roles.semanticConclusion, false, "--json roles card asserts no semantic conclusion");
+  assert.equal(out.cards.roles.hasHighRisk, true, "the payment task makes the roles card high-risk");
+  // English field names (not localized) in the --json contract.
+  for (const key of ["hasHighRisk", "hits", "roles", "semanticConclusion"]) {
+    assert.ok(Object.prototype.hasOwnProperty.call(out.cards.roles, key), `--json roles card keeps the English field name "${key}"`);
+  }
+
+  // Even in --lang zh the --json field NAMES stay English (only display text localizes).
+  const outZh = runJson(["bootstrap", "--workspace", ws, "--yes", "--json", "--lang", "zh"]);
+  assert.ok(Object.prototype.hasOwnProperty.call(outZh.cards.roles, "hasHighRisk"), "--json field names stay English under --lang zh");
+});
+
 test("bootstrap: help documents the command and init points first-time users to it", () => {
   // The command is documented (term-light first screen; details carry the terms).
   const help = runCli(["help"]);
   assert.match(help, /ai-collab bootstrap \[--workspace <dir>\] \[--report-only\] \[--json\] \[--yes\]/, "help lists the bootstrap usage line");
-  assert.match(help, /bootstrap: the recommended first run after init/i, "help explains bootstrap");
+  assert.match(help, /bootstrap: the scan engine your AI uses to onboard you/i, "help explains bootstrap");
   assert.match(help, /WRITES NOTHING|report-only/i, "help states bootstrap writes nothing");
 
   // init's success output points a brand-new user at bootstrap.
@@ -6677,15 +6889,15 @@ test("i18n: `status --lang zh` prints Chinese with the honesty markers faithful 
   assert.match(out, /L3/, "the L3 code stays literal");
 });
 
-// --- bootstrap --lang zh: the three cards, honesty-faithful -----------------
-test("i18n: `bootstrap --lang zh` prints the three cards in Chinese and keeps every un-trustworthy claim faithful", () => {
+// --- bootstrap --lang zh: the five cards, honesty-faithful ------------------
+test("i18n: `bootstrap --lang zh` prints the five cards in Chinese and keeps every un-trustworthy claim faithful", () => {
   const s = bootstrapScenarioWorkspace("i18n-bootstrap-zh");
   const res = runLang("zh", ["bootstrap", "--workspace", s.ws, "--yes"]);
   assert.equal(res.status, 0, "bootstrap --lang zh exits cleanly");
   const out = res.stdout;
 
-  // Header + the three card titles are Chinese (the card NAMES VERIFY/RESUME/HARVEST
-  // stay as stable section labels, but their subtitles are translated).
+  // Header + the card titles are Chinese (the card NAMES PROFILE CLUES/VERIFY/RESUME/
+  // ROLES/HARVEST stay as stable section labels, but their subtitles are translated).
   assert.match(out, /你的 AI 协作基线（来自你自己最近的工作）/, "the report title is Chinese");
   assert.match(out, /只读。没有任何东西离开过这台机器。/, "the read-only promise is Chinese");
   assert.match(out, /VERIFY——哪些『完成』暂时还不能信/, "the VERIFY subtitle is faithful Chinese");

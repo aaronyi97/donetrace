@@ -4,7 +4,7 @@
 // a user's real signals about an AI collaboration — "I said this was done", "I keep
 // correcting the same thing" — live in their CHAT EXPORTS and SHELL LOGS, not in the
 // .aict ledger. bootstrap (bootstrap.js) already turns the ledger + repo + git into
-// three cards; this module lets it ALSO read a LOCAL export the user EXPLICITLY hands
+// five cards; this module lets it ALSO read a LOCAL export the user EXPLICITLY hands
 // over (`--dialogue` / `--logs`) and extract DETERMINISTIC signals to enrich those
 // cards — WITHOUT ever calling a model and WITHOUT sending anything anywhere.
 //

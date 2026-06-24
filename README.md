@@ -88,6 +88,12 @@ node bin/ai-collab.js init --target ./my-ai-workspace
 
 `init` writes a local `.aict/` workspace of plain files. Network: not used at runtime. If you ran this inside a clone of *this* repo, the generated `my-ai-workspace/` is already in our `.gitignore`, so it will not show up as untracked files or dirty your `git status`. Next, take the 10-minute first experience below: the main path runs the loop on *your own* real task; if you would rather watch the flow on a prepared example first, the demo preview (`.aict/walkthroughs/10-minute.md`) is the optional second path.
 
+### What the first conversation looks like
+
+Once the workspace is installed, the rules **instruct** your AI to open the first conversation proactively, rather than waiting to be asked: introduce itself, offer to take ~30 seconds to scan your recent work, and state the privacy boundary *before* scanning (the scan is run by the cloud AI you already use, so its content passes through your provider like any normal chat — this is **not** "zero data leaves your machine"; the `ai-collab` tool itself sends nothing). You stay in control: answer "yes", "just the X project", or "not now". Whether the AI actually opens this way depends on your tool loading this rule — some tools follow workspace instructions more eagerly than others. If you would rather drive it yourself, run `node bin/ai-collab.js bootstrap --yes` for the same read-only baseline at any time.
+
+中文：装好工作区后，这套规则会**指示**你的 AI 在第一次对话时主动开口（而不是等你问）：先自我介绍、提出花约 30 秒扫一眼你最近的活，并在扫描**之前**说清隐私边界——扫描是由你本来就在用的那个云端 AI 执行的，内容会像平常聊天一样经过你的服务商，所以这**不是**「零数据离开你的机器」；`ai-collab` 工具本身不向任何第三方发送东西。主动权在你：回「好」「只看 X 项目」或「先不要」。AI 是否真的这样开口，取决于你的工具有没有加载这条规则——有的工具比别的更听工作区指令。想自己来，随时跑 `node bin/ai-collab.js bootstrap --yes` 拿同样的只读基线。
+
 ## 10-Minute Experience
 
 Two ways in. Pick one.

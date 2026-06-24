@@ -11,7 +11,8 @@
     "contract:check": "node scripts/validate-contract.js",
     "privacy:scan": "node scripts/privacy-scan.js",
     "pack:check": "node scripts/pack-check.js",
-    "check": "node --test && node scripts/validate-contract.js && node scripts/privacy-scan.js && node scripts/pack-check.js"
+    "check": "node --test && node scripts/validate-contract.js && node scripts/privacy-scan.js && node scripts/pack-check.js",
+    "prepublishOnly": "npm run check"
   },
   "keywords": [
     "ai",

@@ -248,6 +248,29 @@ function scanFile(file, root) {
     [/\/Users\/[^/\s]+(?:\/[^\s`'")]+)?/g, "local machine path"],
     [/\/home\/[^/\s]+(?:\/[^\s`'")]+)?/g, "local machine path"],
     [/[A-Za-z]:\\Users\\[^\\\s]+(?:\\[^\s`'")]+)?/g, "local machine path"],
+    // Home-directory path VARIANTS, parallel to the absolute /Users//home//C:\Users
+    // rules above. These are still GENERIC, anyone-applies markers (env-var home
+    // expansions and tilde home) — they name no specific private directory, so they
+    // do not bake any maintainer dir name into the shipped scanner.
+    //   POSIX env-var home expansion (dollar-HOME, optionally brace-wrapped).
+    //   Example forms are not written literally here so the scanner does not flag
+    //   its own comment; see tests/contract.test.js for the concrete fixtures.
+    [/\$\{?HOME\}?\/[^\s`'")]+/g, "local machine path"],
+    //   Windows env-var home expansion (percent-USERPROFILE-percent backslash ...).
+    //   The percent signs are written as [%] char-classes so this regex literal does
+    //   not match itself when the scanner scans its own source (same self-exemption
+    //   technique as the escaped $HOME rule above); the matched input is identical.
+    [/[%]USERPROFILE[%]\\[^\s`'")]+/gi, "local machine path"],
+    //   Tilde home subtree (tilde-slash named-dir slash more). Deliberately NARROW:
+    // it requires a NON-dot first segment plus a deeper level, so it flags a leaked
+    // real home path (a personal docs/desktop subtree) but NOT a bare tilde-slash, a
+    // single-segment tilde-slash-foo, or a standard dot tool/config dir (the npm log,
+    // config, or ssh dotfile dirs). Those dotfile dirs are generic-and-benign (the
+    // same stance as the Claude hooks dir); a maintainer's OWN private dir name is
+    // matched instead via the manifest/local denylist.paths loop, never hard-coded
+    // here. Concrete matchable examples live only in the test fixtures, never in
+    // this scanned source.
+    [/~\/(?!\.)[^/\s`'")]+\/[^\s`'")]+/g, "local machine path"],
     [/\bgh[pousr]_[A-Za-z0-9_]{20,}/g, "GitHub token"],
     [/\bgithub_pat_[A-Za-z0-9_]{30,}/g, "GitHub token"],
     [/\bxox[baprs]-[A-Za-z0-9-]{20,}/g, "Slack token"],

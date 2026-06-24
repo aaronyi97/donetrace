@@ -2094,8 +2094,9 @@ Next: review ${filePath}, then share it (or paste it into the next tool with the
 //
 // bootstrap is the first-experience entry point: it reads the user's OWN recent
 // work (repo structure, read-only git, the .aict ledger, AI instruction files) and
-// prints a plain "AI collaboration baseline" — three cards (VERIFY / RESUME /
-// HARVEST). The honest core (which "done"s cannot be trusted, what the bucketing
+// prints a plain "AI collaboration baseline" — five cards (PROFILE CLUES /
+// VERIFY / RESUME / ROLES / HARVEST). The honest core (which "done"s cannot be
+// trusted, what the bucketing
 // is) lives in bootstrap.js + ledger.js; this command only gathers the inputs
 // (resolve the workspace, capture git output, read the ledgers) and prints.
 //

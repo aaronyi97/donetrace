@@ -5,8 +5,10 @@
 // for — the value is never proven on their OWN work. bootstrap reads what the
 // user actually has locally (their repo, their git activity, their .aict ledger,
 // their AI instruction files) and turns it into ONE plain "AI collaboration
-// baseline report": three cards — VERIFY (which "done"s cannot be trusted yet),
-// RESUME (where you are / what is missing), HARVEST (what you can carry forward).
+// baseline report": five cards — PROFILE CLUES (setup signals to confirm),
+// VERIFY (which "done"s cannot be trusted yet), RESUME (where you are / what is
+// missing), ROLES (high-risk keywords mapped to helper roles), HARVEST (what
+// you can carry forward).
 //
 // HONESTY IS THE WHOLE POINT (four red lines, enforced structurally here):
 //   1. Deterministic only. This module reads files + runs read-only git; it calls
@@ -22,12 +24,12 @@
 //      (isSeedRow excludes it), so an empty workspace honestly says "no data yet"
 //      instead of borrowing the example's numbers.
 //
-// This is the report-only version: scan + three cards + a consent preview + init
+// This is the report-only version: scan + five cards + a consent preview + init
 // tie-in. It now ALSO does the LOCAL HALF of semantic scanning (dialogue.js): when —
 // and ONLY when — the user EXPLICITLY hands over a local chat/log export
 // (`--dialogue` / `--logs`), bootstrap reads it and extracts DETERMINISTIC signals
 // (a word-table completion claim cross-referenced against the ledger; a repeated
-// correction) to enrich the three cards. That local half stays inside red line #1:
+// correction) to enrich the five cards. That local half stays inside red line #1:
 // no model call, no guess, no network — a "done" found in a chat becomes a VERIFY
 // CANDIDATE labelled "claimed in dialogue · not verified", never a "done". The
 // EXTERNAL-model half (`--send-to-model`), a save/write-back flow, and a GUI are
@@ -216,7 +218,7 @@ export function scanLocalStructure({ workspaceRoot, repoRoot, git = {} }) {
   };
 }
 
-// --- B. Three cards (the core value), built from the HONEST ledger functions ---
+// --- B. The trust-bearing cards (the core value), built from the HONEST ledger functions ---
 //
 // Everything trust-bearing below is DERIVED by the shared ledger.js functions, not
 // recomputed here: buildHandoffModel does the done/unverified bucketing with the
@@ -483,6 +485,187 @@ function buildHarvestCard(handoff, learning = [], dialogue = null) {
   return { confirmedLearnings, proposedLearnings, candidates, dialogueCandidates };
 }
 
+// --- B2. Profile-clues card (DETERMINISTIC signals only, NO semantic verdict) --
+//
+// The fourth card. Its ONLY job is to list CONCRETE, machine-observable facts the
+// user can recognise — never a personality read. bootstrap is a report-only engine
+// with no model and no right to GUESS a work style: it may say "you have Claude +
+// Cursor configured here" (a fact the user can confirm by looking) but NOT "you
+// prefer X" (a semantic judgment). The footer makes the contract explicit: these
+// are CLUES the user's OWN ai will turn into a profile in first-run, not a
+// conclusion bootstrap reached. Pure read over the scan; writes nothing, calls
+// nothing.
+//
+// Signals (all from the existing scan, all deterministic):
+//   - detectedTools: the AI tools whose instruction files are present (reused from
+//     scanAiInstructionFiles -> detectTools). >= 2 is flagged as a cross-tool
+//     signal — a FACT (two tools are configured), not a claim about how they work.
+//   - fileTypes: the extension distribution of the recently-modified files (a count
+//     per extension). "you touched .ts and .sql files lately" is observable; what
+//     it MEANS is for the user's ai, not bootstrap.
+//   - hasTestScript: whether package.json has a `test` script. We label it the
+//     plain fact "has a test script" — a signal the user can verify, never
+//     "you value testing" stated as settled truth.
+// Each datum carries the raw fact so a --json consumer (and a test) can assert the
+// card contains evidence, not interpretation.
+export function buildProfileCard(scan) {
+  const ai = scan && scan.ai ? scan.ai : { detectedTools: [], instructionFiles: [] };
+  const detectedTools = Array.isArray(ai.detectedTools) ? ai.detectedTools : [];
+
+  // Extension distribution of the recently-modified files. A file with no extension
+  // (e.g. "Makefile") is bucketed under "(no ext)" so the count stays honest. The
+  // list is sorted by count desc, then name, for a stable display + --json contract.
+  const recent = Array.isArray(scan && scan.recentlyModified) ? scan.recentlyModified : [];
+  const extCounts = new Map();
+  for (const name of recent) {
+    if (typeof name !== "string" || name.length === 0) continue;
+    const ext = path.extname(name); // ".ts", "", ".sql", …
+    const key = ext.length > 0 ? ext : "(no ext)";
+    extCounts.set(key, (extCounts.get(key) ?? 0) + 1);
+  }
+  const fileTypes = [...extCounts.entries()]
+    .map(([ext, count]) => ({ ext, count }))
+    .sort((a, b) => b.count - a.count || a.ext.localeCompare(b.ext));
+
+  const hasTestScript =
+    Boolean(scan && scan.packageJson && scan.packageJson.present) &&
+    typeof scan.packageJson.testScript === "string" &&
+    scan.packageJson.testScript.length > 0;
+
+  return {
+    // The detected tools, and whether there is more than one (a cross-tool FACT).
+    detectedTools,
+    multiTool: detectedTools.length >= 2,
+    fileTypes,
+    hasTestScript,
+    // The load-bearing honesty assertion, mirrored on every card item a consumer
+    // might mistake for a verdict: this card draws NO semantic conclusion. Carried
+    // so a test can assert bootstrap never crosses the report-only line here.
+    semanticConclusion: false
+  };
+}
+
+// --- B3. Roles-suggestion card (DETERMINISTIC keyword match -> existing roles) --
+//
+// The fifth card. It scans the user's task titles + recently-touched file PATHS for
+// a fixed list of high-risk keywords and, when one matches, suggests an EXISTING
+// open-source role package to bring in. The honesty contract is the same as the
+// profile card: it states a FACT ("the title 'payment callback' contains the word
+// 'payment'") and a deterministic mapping to a role — it does NOT decide the work
+// IS risky, only that a known high-risk WORD appears. The user's ai makes the call;
+// the card's wording says these are clues to confirm. Pure read; no write, no model.
+//
+// The keyword table is grouped by RISK THEME; each theme maps to one or more role
+// suggestions. The roles named here are all packages that already ship in the
+// open-source workspace (.aict/skills/ + .aict/mechanisms/): red-team, dual-guard,
+// scout-review-controller — verified present, never invented.
+const ROLE_RISK_GROUPS = [
+  {
+    theme: "auth", // authentication / credentials
+    keywords: ["auth", "login", "password", "credential", "token", "secret"],
+    roles: ["red-team", "dual-guard"]
+  },
+  {
+    theme: "money", // payments / billing
+    keywords: ["payment", "pay", "billing", "invoice"],
+    roles: ["red-team", "dual-guard"]
+  },
+  {
+    theme: "security", // explicit security / crypto
+    keywords: ["security", "crypto"],
+    roles: ["scout-review-controller", "red-team"]
+  },
+  {
+    theme: "deploy", // deployment / data layer
+    keywords: ["deploy", "release", "migration", "database", "schema"],
+    roles: ["scout-review-controller", "red-team"]
+  }
+];
+
+// Find the FIRST keyword (lowercase substring) from `keywords` that appears in
+// `haystack` (already lowercased). Returns the matched keyword or null. Substring
+// match is deliberate so "authentication"/"reauth" trip "auth"; it is a CLUE the
+// user's ai confirms, so a slightly broad match is acceptable (and honest about
+// being a word-match, never a verdict).
+function firstKeywordHit(haystack, keywords) {
+  for (const kw of keywords) {
+    if (haystack.includes(kw)) return kw;
+  }
+  return null;
+}
+
+// Build the roles card. `tasks` and `scan` come from the same inputs the other
+// cards use. Seed tasks are excluded (isSeedRow) so the shipped example never
+// manufactures a role suggestion. Returns:
+//   - hits: up to TOP 3 high-risk items, each { subject, keyword, theme, roles,
+//     source } — `subject` is the task title or file path that matched, so the card
+//     can show the exact evidence ("task 'X' matched keyword 'Y' -> suggest Z").
+//   - roles: the de-duplicated union of suggested role ids across the hits (for the
+//     Next-step + a --json consumer), each tagged with the plain-language simile key.
+//   - hasHighRisk: whether anything matched at all (drives the honest no-match line).
+// The card NEVER says the work is risky; it says a high-risk WORD appears and maps
+// it to a role to consider — a deterministic fact + a fixed mapping, no judgment.
+export function buildRolesCard(tasks, scan) {
+  const taskList = Array.isArray(tasks) ? tasks : [];
+  const recent = Array.isArray(scan && scan.recentlyModified) ? scan.recentlyModified : [];
+
+  // The candidate surfaces to scan: every NON-seed task title (source "task") and
+  // every recently-modified file path (source "file"). Each carries the raw subject
+  // so the matched evidence is shown verbatim, never paraphrased into a conclusion.
+  const subjects = [];
+  for (const task of taskList) {
+    if (!task || typeof task !== "object") continue;
+    if (isSeedRow(task, "tasks")) continue; // never the shipped example
+    const title = typeof task.title === "string" ? task.title : "";
+    if (title.length === 0) continue;
+    subjects.push({ source: "task", subject: title });
+  }
+  for (const name of recent) {
+    if (typeof name === "string" && name.length > 0) {
+      subjects.push({ source: "file", subject: name });
+    }
+  }
+
+  // Match each subject against every risk group; collect the hits. We keep the FIRST
+  // group that matches a given subject (a subject rarely belongs to two themes, and
+  // showing one clear reason per subject is less noisy than every partial match).
+  const hits = [];
+  for (const { subject, source } of subjects) {
+    const haystack = subject.toLowerCase();
+    for (const group of ROLE_RISK_GROUPS) {
+      const keyword = firstKeywordHit(haystack, group.keywords);
+      if (keyword) {
+        hits.push({ subject, source, keyword, theme: group.theme, roles: group.roles });
+        break; // one theme per subject
+      }
+    }
+  }
+
+  // Cap at TOP 3 high-risk items so the card does not carpet-bomb the user (the brief:
+  // "no repeated bombardment; at most top 3"). Order is scan order (tasks first, then
+  // files), which is stable and deterministic.
+  const topHits = hits.slice(0, 3);
+
+  // The de-duplicated union of suggested roles across the shown hits, each with the
+  // plain-language simile key the renderer/Next-step uses. Stable order = first seen.
+  const roleOrder = [];
+  for (const hit of topHits) {
+    for (const role of hit.roles) {
+      if (!roleOrder.includes(role)) roleOrder.push(role);
+    }
+  }
+  const roles = roleOrder.map((id) => ({ id }));
+
+  return {
+    hasHighRisk: topHits.length > 0,
+    hits: topHits,
+    roles,
+    // The same report-only honesty flag the profile card carries: a keyword match is
+    // a fact + a fixed mapping, NOT a decision that the work is risky.
+    semanticConclusion: false
+  };
+}
+
 // Top-level: turn the scan + the raw ledgers into the full bootstrap model. The
 // ledgers are passed in already-parsed (the CLI reads them via readLedger). We run
 // buildHandoffModel + summarizeTasks ONCE and hand their honest output to the card
@@ -521,6 +704,12 @@ export function buildBootstrapModel({ ledgers, scan, handoffDraftCount = 0, dial
   const verify = buildVerifyCard(handoff, perTask, dialogue);
   const resume = buildResumeCard(handoff, perTask, scan, handoffDraftCount);
   const harvest = buildHarvestCard(handoff, learning, dialogue);
+  // The two new DETERMINISTIC cards (red line: facts + recognisable evidence, never
+  // a semantic verdict). profile reads the scan only; roles reads the user's task
+  // titles (seeds excluded) + recently-touched file paths against a fixed high-risk
+  // keyword table. Neither writes or calls a model — pure reads, like the cards above.
+  const profile = buildProfileCard(scan);
+  const roles = buildRolesCard(tasks, scan);
 
   // The dialogue scan is the user's OWN data (a chat THEY exported), so even a
   // seed-only ledger gains a real baseline once a dialogue file is read — `dialogueUsed`
@@ -554,7 +743,10 @@ export function buildBootstrapModel({ ledgers, scan, handoffDraftCount = 0, dial
       handoff: handoff.counts
     },
     scan,
-    cards: { verify, resume, harvest }
+    // Card order in the model mirrors the render order: profile (a warm, factual
+    // opener) -> verify -> resume -> roles -> harvest. A --json consumer reads them
+    // by name, so the object-key order is for readability only.
+    cards: { profile, verify, resume, roles, harvest }
   };
 }
 
@@ -691,6 +883,77 @@ function renderHarvestCard(harvest, locale = "en") {
   return lines.join("\n");
 }
 
+// Render the PROFILE-CLUES card. Leads the report with recognisable facts (a warm,
+// factual opener), then a FIXED footer that states the honesty contract out loud:
+// these are clues, not a conclusion, and the user's own ai will confirm the real
+// work-style profile. Every line is a fact from the scan; none is a judgment.
+function renderProfileCard(profile, locale = "en") {
+  const lines = [];
+  lines.push(t("bootstrap.profile.title", {}, locale));
+
+  const tools = Array.isArray(profile.detectedTools) ? profile.detectedTools : [];
+  if (tools.length > 0) {
+    lines.push(t("bootstrap.profile.tools", { tools: tools.join(", ") }, locale));
+    // More than one tool is a cross-tool FACT (two tools configured), surfaced as a
+    // collaboration SIGNAL — never "you like working across tools" as a verdict.
+    if (profile.multiTool) {
+      lines.push(t("bootstrap.profile.multiTool", {}, locale));
+    }
+  } else {
+    lines.push(t("bootstrap.profile.noTools", {}, locale));
+  }
+
+  const fileTypes = Array.isArray(profile.fileTypes) ? profile.fileTypes : [];
+  if (fileTypes.length > 0) {
+    const names = fileTypes.map((f) => `${f.ext} (×${f.count})`).join(", ");
+    lines.push(t("bootstrap.profile.fileTypes", { names }, locale));
+  }
+
+  if (profile.hasTestScript) {
+    lines.push(t("bootstrap.profile.testScript", {}, locale));
+  }
+
+  // The fixed footer — the load-bearing honesty line. Always present, never softened:
+  // "these are clues, not a conclusion; your ai will confirm the full profile."
+  lines.push(t("bootstrap.profile.footer", {}, locale));
+  return lines.join("\n");
+}
+
+// Render the ROLES-SUGGESTION card. Each hit shows the exact matched evidence (the
+// task title or file path + the keyword) and the suggested role(s) with a plain-
+// language simile, so the user sees WHY a role is suggested — a fact + a fixed
+// mapping, never "this work is dangerous" as a verdict. No hit -> an honest "no
+// high-risk keywords matched — a keyword scan only, not a low-risk verdict" line.
+function renderRolesCard(roles, locale = "en") {
+  const lines = [];
+  lines.push(t("bootstrap.roles.title", {}, locale));
+
+  if (!roles.hasHighRisk) {
+    // Honest no-match: do not manufacture a suggestion. Say plainly that nothing
+    // high-risk was scanned and a single tool is enough until the user needs more.
+    lines.push(t("bootstrap.roles.none", {}, locale));
+    return lines.join("\n");
+  }
+
+  lines.push(t("bootstrap.roles.intro", { count: roles.hits.length, plural: roles.hits.length === 1 ? "" : "s" }, locale));
+  for (const hit of roles.hits) {
+    // The role names + their plain-language similes, joined. The simile lives in
+    // i18n (e.g. "red-team = someone whose whole job is to poke holes"), so the
+    // role label is never a bare term wall on the user's first read.
+    const roleText = hit.roles
+      .map((id) => t(`bootstrap.roles.role.${id}`, {}, locale))
+      .join(t("bootstrap.roles.roleJoin", {}, locale));
+    // The matched SUBJECT is shown verbatim (the task title or file path), then the
+    // keyword, then the suggestion — the full evidence chain, localized but faithful.
+    lines.push(t("bootstrap.roles.item", {
+      subject: hit.subject,
+      keyword: hit.keyword,
+      roles: roleText
+    }, locale));
+  }
+  return lines.join("\n");
+}
+
 // The whole report as plain text. Leads with the honest framing, then the three
 // Build the transparency block (red line #5) for a report that read a local dialogue
 // or log export: which files were read (path + line count), how many snippets were
@@ -753,9 +1016,17 @@ export function renderBootstrapReport(model, locale = "en") {
     return lines.join("\n");
   }
 
+  // Card order (per the product brief): profile leads with recognisable facts so the
+  // first screen earns goodwill, then VERIFY (the most urgent honesty signal), RESUME,
+  // the roles suggestion (high-risk -> bring help), and HARVEST. The two new cards are
+  // DETERMINISTIC fact lists; VERIFY + roles remain the load-bearing content.
+  lines.push(renderProfileCard(model.cards.profile, locale));
+  lines.push("");
   lines.push(renderVerifyCard(model.cards.verify, locale));
   lines.push("");
   lines.push(renderResumeCard(model.cards.resume, locale));
+  lines.push("");
+  lines.push(renderRolesCard(model.cards.roles, locale));
   lines.push("");
   lines.push(renderHarvestCard(model.cards.harvest, locale));
   lines.push("");
@@ -774,6 +1045,32 @@ export function renderBootstrapReport(model, locale = "en") {
 // never invents a write path (no --save-safe; the only sanctioned write is the
 // existing learning add/confirm + receipt flow the user runs themselves).
 export function bootstrapNextStepLines(model, locale = "en") {
+  // The PRIMARY next step keeps its original priority ladder VERIFY -> RESUME ->
+  // HARVEST -> all-clear (VERIFY is the most urgent honesty signal, so it stays the
+  // headline action). The roles HINT is APPENDED after it (not in place of it) when
+  // high-risk roles were suggested, so the user is told to bring help without burying
+  // the verify action. A roles hint is advisory — it points at an EXISTING role
+  // package to read, never a write path.
+  const primary = bootstrapPrimaryNextStep(model, locale);
+
+  // Append the high-risk roles hint, if any. The roles card already de-duped + capped
+  // the suggestions; we surface their plain-language names so the user knows who to
+  // bring — the spec's "if high-risk roles were suggested, fold them into Next".
+  const roles = model.cards.roles;
+  if (roles && roles.hasHighRisk && Array.isArray(roles.roles) && roles.roles.length > 0) {
+    const roleText = roles.roles
+      .map((r) => t(`bootstrap.roles.role.${r.id}`, {}, locale))
+      .join(t("bootstrap.roles.roleJoin", {}, locale));
+    return [...primary, t("bootstrap.next.roles.text", { roles: roleText }, locale)];
+  }
+  return primary;
+}
+
+// The primary next-step lines (the original VERIFY -> RESUME -> HARVEST -> all-clear
+// ladder). Split out so bootstrapNextStepLines can append the roles hint after it
+// without duplicating the ladder. Returns 1-2 lines: a plain sentence + an optional
+// real copy-pasteable command. Every command is one the CLI already ships and audits.
+function bootstrapPrimaryNextStep(model, locale = "en") {
   // (1) VERIFY (ledger): something is claimed done but cannot be trusted. Point at the
   //     real command that closes the specific gap, with the offending id filled in. We
   //     deliberately pick the first LEDGER item (not a dialogue one) for the receipt-
