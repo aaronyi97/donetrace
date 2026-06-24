@@ -1,0 +1,2 @@
+{"id":"e0","taskId":"t0","kind":"note","summary":"(synthetic) example evidence seed row bound to task t0","createdAt":"2026-01-01T00:00:00.000Z"}
+{"id":"e1","taskId":"t0","kind":"cross_family_guard","summary":"(synthetic) cross-family guard review seed row bound to task t0","reviewer":"(synthetic) example reviewer","family":"(synthetic) other-model-family","createdAt":"2026-01-01T00:00:00.000Z"}

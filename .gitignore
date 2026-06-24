@@ -1,0 +1,26 @@
+node_modules/
+*.tgz
+.DS_Store
+coverage/
+.env
+.env.*
+!.env.example
+# Local, machine-specific privacy overrides: your own private dir names / terms.
+# Ship only privacy-scan.local.json.example; never the filled-in local copy.
+privacy-scan.local.json
+tmp/
+dist/
+# Local artifacts produced by running the CLI inside a repo, never part of a release:
+#   workspace.js writes <dir>.backup-<ts> when init --force replaces an existing .aict
+#   adapters.js writes <file>.aict-backup-<ts> when adapters install overwrites a guidance file
+.aict.backup-*
+*.aict-backup-*
+# The workspace the README tells a first-time user to generate:
+#   `init --target ./my-ai-workspace` writes 200+ files (its .aict/ lives inside this
+#   dir). Ignored so a cloned repo stays clean — `git status` does not erupt with
+#   untracked files after the very first command we hand people. The bare (no-slash)
+#   form matches the name whether or not the dir exists yet on disk, plus common
+#   variants (my-ai-workspace-2, my-ai-workspace.bak, …). This matches ONLY a
+#   user-generated `my-ai-workspace*` target; it does NOT touch this repo's own
+#   committed `.aict/` (the contract-parity fixture), which is dogfooded at the repo root.
+my-ai-workspace*

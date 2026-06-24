@@ -1,0 +1,68 @@
+{
+  "name": "ai-collab-open-system",
+  "version": "0.1.0",
+  "description": "Local-first open-source AI collaboration workspace with profile, context, acceptance, guard, handoff, and harvest structure.",
+  "type": "module",
+  "bin": {
+    "ai-collab": "./bin/ai-collab.js"
+  },
+  "scripts": {
+    "test": "node --test",
+    "contract:check": "node scripts/validate-contract.js",
+    "privacy:scan": "node scripts/privacy-scan.js",
+    "pack:check": "node scripts/pack-check.js",
+    "check": "node --test && node scripts/validate-contract.js && node scripts/privacy-scan.js && node scripts/pack-check.js"
+  },
+  "keywords": [
+    "ai",
+    "collaboration",
+    "local-first",
+    "workspace",
+    "codex",
+    "claude-code",
+    "cursor",
+    "agents",
+    "handoff",
+    "guard-review"
+  ],
+  "author": {
+    "name": "Aaron Yi",
+    "email": "yi19970319@gmail.com",
+    "url": "https://x.com/AaronYiaazw"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaronyi97/ai-collab-open-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aaronyi97/ai-collab-open-system/issues"
+  },
+  "homepage": "https://github.com/aaronyi97/ai-collab-open-system#readme",
+  "files": [
+    ".aict",
+    "bin",
+    "docs",
+    "scripts",
+    "src",
+    "tests",
+    "README.md",
+    "START_HERE.md",
+    "PRODUCT_CONTRACT.md",
+    "CHANGELOG.md",
+    "KNOWN_LIMITATIONS.md",
+    "RELEASE_CHECKLIST.md",
+    "privacy-manifest.json",
+    "privacy-scan.local.json.example",
+    "LICENSE",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CODE_OF_CONDUCT.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

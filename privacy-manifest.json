@@ -1,0 +1,77 @@
+{
+  "localFirst": true,
+  "defaultNetworkUse": "none",
+  "publicAllowed": [
+    "generic architecture",
+    "generic prompts",
+    "generic templates",
+    "thin tool adapters",
+    "synthetic examples",
+    "privacy docs",
+    "setup docs",
+    "self-build guide",
+    "known limitations"
+  ],
+  "publicForbidden": [
+    "real private governance contents",
+    "private knowledge-base source material",
+    "real personal profile",
+    "actual client material",
+    "raw private conversations",
+    "non-public automation details",
+    "non-public routing details",
+    "internal calibration thresholds",
+    "internal scoring weights",
+    "account-specific habits",
+    "local machine paths",
+    "tokens, keys, cookies, credentials",
+    "unredacted screenshots",
+    "full internal service SOP"
+  ],
+  "scanner": "scripts/privacy-scan.js",
+  "publicContactsComment": "EXACT-string allowlist for the privacy scanner's email rule. The scanner blocks EVERY email address EXCEPT one that exactly matches an entry here — this is a narrow, explainable exemption for the project's PUBLISHED public contact only, NOT a domain or category allowlist (a different address, even at the same domain, still fails the scan). Keep this to the maintainer's intentionally-public contact email; never add a customer/private address here.",
+  "publicContacts": [
+    "yi19970319@gmail.com"
+  ],
+  "scanDenylist": {
+    "comment": "Maintainable central denylist consumed by scripts/privacy-scan.js. Extend these arrays to harden the gate without touching scanner code. Keep entries PUBLIC-SAFE and GENERIC (anyone-applies): list generic markers and placeholders, never paste a real secret/customer/path or your OWN private directory name here (this manifest ships in the public package and is itself scanned). For YOUR personal private dir names / terms, use the gitignored local override instead — copy privacy-scan.local.json.example to privacy-scan.local.json; the scanner merges it on top of this list.",
+    "paths": [
+      ".claude/hooks"
+    ],
+    "pathsComment": ".claude/hooks is the standard Claude Code hooks directory every Claude Code user has, kept as a GENERIC marker so a user does not paste their own private hook contents. Add your personal private dirs via privacy-scan.local.json, not here.",
+    "terms": [],
+    "chineseTerms": [
+      "真实客户",
+      "真实项目",
+      "客户名单",
+      "原始对话",
+      "内部路由",
+      "内部阈值",
+      "内部权重",
+      "私有治理",
+      "私有体系",
+      "知识库源料"
+    ]
+  },
+  "bilingual": {
+    "comment": "The repo is intentionally bilingual: it ships a sanctioned Chinese onboarding surface alongside English. These rules tell the Chinese-leak heuristic which Chinese is allowed, so legitimate bilingual UX does not trip the gate while stray (unmarked) Chinese — a likely sign of pasted private material — still fails. sectionMarkers open a sanctioned bilingual block for the next contextWindow lines; lineAllow exempts a single line; zhKeyAllowed exempts localized `zh:` strings; sanctionedFiles names whole-file bilingual SOURCES (the i18n message catalog + its tests) where the unmarked-run heuristic is relaxed — the token/key/local-path/email rules and the chineseTerms denylist still apply to them.",
+    "sectionMarkers": [
+      "中文",
+      "Chinese positioning",
+      "Chinese path"
+    ],
+    "lineAllow": [
+      "AI \\u534f\\u4f5c",
+      "\\u672c\\u5730\\u4f18\\u5148"
+    ],
+    "sanctionedFiles": [
+      "src/i18n.js",
+      "src/dialogue.js",
+      "tests/contract.test.js"
+    ],
+    "sanctionedFilesComment": "src/i18n.js is the bilingual message catalog (EN canonical + ZH faithful) — it is densely Chinese BY DESIGN, so the unmarked-run heuristic only produces noise there. src/dialogue.js is the dialogue-scan module: it ships Chinese completion/correction MARKER WORD TABLES (e.g. 已完成 / 搞定 / 不对) it must match against a user's bilingual chat export, so it carries sanctioned product Chinese by design. tests/contract.test.js asserts the localized ZH output (the honesty translations), so it too carries sanctioned product Chinese. All three remain subject to the hard token/key/local-path/email rules and the chineseTerms private-term denylist.",
+    "zhKeyAllowed": true,
+    "contextWindow": 12,
+    "minRun": 4
+  }
+}

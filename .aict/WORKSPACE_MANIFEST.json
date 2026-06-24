@@ -1,0 +1,90 @@
+{
+  "name": "AI Collaboration Open System Workspace",
+  "version": "0.1.0",
+  "localFirst": true,
+  "defaultNetworkUse": "none",
+  "workspaceDirs": [
+    "profile",
+    "context",
+    "acceptance",
+    "guard",
+    "handoff",
+    "harvest",
+    "roles",
+    "modes",
+    "mechanisms",
+    "prompts",
+    "skills",
+    "adapters",
+    "examples",
+    "cookbook",
+    "state",
+    "privacy"
+  ],
+  "layers": [
+    "profile",
+    "context",
+    "acceptance",
+    "guard",
+    "handoff",
+    "harvest"
+  ],
+  "mechanisms": [
+    "dual-guard",
+    "scout-review-controller",
+    "one-click-dispatch",
+    "task-splitting",
+    "anti-drift-partner",
+    "root-cause-brake",
+    "half-product-review",
+    "handoff-abc",
+    "harvest-and-erc",
+    "do-not-handle-yet",
+    "plain-language-first-screen",
+    "honest-calibration",
+    "feedback-absorption-ledger",
+    "collaboration-coach",
+    "single-tool-guard"
+  ],
+  "prompts": [
+    "profile-creation.md",
+    "profile-refinement.md",
+    "project-context-packaging.md",
+    "acceptance-definition.md",
+    "guard-review.md",
+    "red-team-challenge.md",
+    "handoff-generation.md",
+    "harvest-extraction.md",
+    "mode-switching.md",
+    "workflow-reset.md",
+    "rule-update-proposal.md"
+  ],
+  "skills": [
+    "profile",
+    "context",
+    "acceptance",
+    "guard",
+    "evidence-pack",
+    "single-tool-guard",
+    "handoff",
+    "harvest",
+    "red-team",
+    "mode-switch"
+  ],
+  "adapters": [
+    "claude-code",
+    "codex",
+    "cursor",
+    "windsurf",
+    "copilot",
+    "cline"
+  ],
+  "syntheticCases": [
+    "ai-coding-long-task",
+    "content-production-harvest",
+    "research-knowledge-synthesis",
+    "multi-tool-collaboration",
+    "personal-judgment-growth-assistant"
+  ],
+  "firstExperience": "START_HERE.md -> 10/30/60 minute path -> synthetic loop -> real task adaptation"
+}

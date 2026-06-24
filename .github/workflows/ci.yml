@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - 18
+          - 20
+          - 22
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      # Zero runtime dependencies, but a committed package-lock.json is present,
+      # so npm ci is the right reproducible install.
+      - name: Install (reproducible)
+        run: npm ci
+
+      # The four-gate quality bar: node --test, contract check, privacy scan, pack check.
+      - name: Check (test + contract + privacy + pack)
+        run: npm run check
+
+      # Build the real tarball CI will smoke-test below.
+      - name: Pack tarball
+        run: npm pack
+
+      # Fresh-install smoke test: prove the packed artifact installs into a clean
+      # project and the installed ai-collab bin actually runs.
+      - name: Tarball install smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARBALL="$(ls ai-collab-open-system-*.tgz | head -n1)"
+          ABS_TARBALL="$PWD/$TARBALL"
+          echo "Packed tarball: $ABS_TARBALL"
+
+          SMOKE_DIR="$(mktemp -d)"
+          echo "Fresh install dir: $SMOKE_DIR"
+          (
+            cd "$SMOKE_DIR"
+            npm init -y >/dev/null 2>&1
+            npm install "$ABS_TARBALL"
+          )
+
+          BIN="$SMOKE_DIR/node_modules/.bin/ai-collab"
+          echo "Resolved installed bin: $(readlink "$BIN" || echo MISSING)"
+          test -x "$BIN" || { echo "installed ai-collab bin is missing"; exit 1; }
+
+          "$BIN" init --target "$SMOKE_DIR/ws" --force
+          "$BIN" guide
+          "$BIN" demo
+          "$BIN" check --workspace "$SMOKE_DIR/ws/.aict"
+          echo "Tarball install smoke passed."
+
+      # CLI smoke against the source checkout (the documented pre-publish path).
+      - name: CLI smoke (source entry)
+        shell: bash
+        run: |
+          set -euo pipefail
+          WS="$(mktemp -d)/ws"
+          node bin/ai-collab.js init --target "$WS" --force
+          node bin/ai-collab.js guide
+          node bin/ai-collab.js demo
+          node bin/ai-collab.js check --workspace "$WS/.aict"
+          echo "CLI smoke passed."

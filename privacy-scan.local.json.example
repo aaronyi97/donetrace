@@ -1,0 +1,18 @@
+{
+  "_comment": "OPTIONAL local override for the privacy scanner. Copy this file to `privacy-scan.local.json` (which is gitignored and never published) and add YOUR OWN private identifiers. The public package intentionally ships only GENERIC markers (emails, API keys, phone numbers, absolute /Users paths, .env, .pem/.key, .claude config) that apply to everyone. Your personal private directory names and private terms do not belong in the public manifest, so list them here instead. The scanner merges this file on top of privacy-manifest.json's scanDenylist when present.",
+
+  "_worked_example_comment": "WORKED EXAMPLE (this is exactly how THIS project's maintainer uses the override; the names are shown here only as a pattern to copy — the active arrays below stay as placeholders so the published .example file does not itself bake in any private dir name). The maintainer keeps a personal governance directory and a personal knowledge base on disk; their REAL gitignored privacy-scan.local.json adds both names to `paths`, e.g. paths: [\"<your-private-governance-dir>\", \"<your-knowledge-base-dir>\"]. With those entries present, any file the scanner reads that mentions either folder name FAILS the scan (reported as a denylisted path) and is also blocked from the npm tarball — so a stray reference to your private governance/knowledge dirs can never ship. Copy this file, then replace the two placeholders below with your own real folder names.",
+
+  "paths": [
+    "<your-private-governance-dir>",
+    "<your-knowledge-base-dir>"
+  ],
+
+  "_paths_comment": "Substring path markers to forbid in scanned file CONTENT, and to block from the npm tarball. Replace the placeholders with the names of your own private dirs (e.g. a personal governance folder or knowledge base — see the worked example above). Leave empty if you have none.",
+
+  "terms": [],
+  "_terms_comment": "Plain (English/ASCII) private terms to forbid in scanned content (e.g. an internal codename).",
+
+  "chineseTerms": [],
+  "_chineseTerms_comment": "Chinese private terms to forbid in scanned content."
+}
