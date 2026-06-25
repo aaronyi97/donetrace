@@ -269,6 +269,23 @@ Full command list: node bin/ai-collab.js --help
 `);
 }
 
+// `welcome` HARD-PRINTS the fixed onboarding intro (welcome.intro) verbatim. The
+// flow: the AI finishes installing the pack, runs this command, and shows the user
+// its output as-is — so the full "what this collaboration pack adds" intro is
+// GUARANTEED to appear complete and accurate, instead of being re-summarized (and
+// possibly trimmed/garbled) by the model. The text itself lives in the i18n catalog
+// (en canonical + the Owner-locked zh 4th draft), so `--lang zh` prints Chinese via
+// the same locale machinery init/bootstrap use; this handler only selects + prints
+// it. --json wraps the same text so an integrating tool can capture it.
+function welcome(args) {
+  emit(args, tr("welcome.intro"), {
+    command: "welcome",
+    locale: CURRENT_LOCALE,
+    text: tr("welcome.intro"),
+    network: "not used"
+  });
+}
+
 function printHelp() {
   console.log(tr("help.main"));
 }
@@ -2758,7 +2775,7 @@ function printVersion() {
 // Every top-level command word the CLI dispatches. Used both to validate an
 // unknown command and to suggest the closest match on a typo.
 const TOP_LEVEL_COMMANDS = [
-  "init", "guide", "demo", "check", "adapters", "task", "evidence",
+  "init", "welcome", "guide", "demo", "check", "adapters", "task", "evidence",
   "run", "receipt", "learning", "status", "capability", "handoff", "bootstrap", "help", "version"
 ];
 
@@ -2839,6 +2856,7 @@ async function main() {
     if (command === undefined) { printQuickstart(); return; }
 
     if (command === "init") init(args);
+    else if (command === "welcome") welcome(args);
     else if (command === "guide") guide(args);
     else if (command === "demo") demo(args);
     else if (command === "check") check(args);

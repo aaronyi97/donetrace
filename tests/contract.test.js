@@ -6964,6 +6964,80 @@ test("i18n: `--help --lang zh` and `--help levels --lang zh` print Chinese, keep
   }
 });
 
+// --- welcome: the proactive onboarding intro the CLI HARD-PRINTS verbatim ----
+//
+// `welcome` exists so the AI can install the pack, run the command, and show the
+// user a FIXED, complete intro (not a re-summarized one). These tests pin the load-
+// bearing anchors so a future edit cannot quietly drop a layer, a keyword, the
+// privacy-honesty sentence, or the closing call-to-action — in BOTH languages — and
+// guard the honesty contract: the English must NOT over-claim privacy as "zero data
+// leaves your machine" (the optional scan step does pass your work through the AI's
+// provider, and the copy says so plainly).
+test("welcome: the English intro hard-prints all six layers, the three keywords, the honest privacy line and the closing question", () => {
+  const out = runCli(["welcome"]); // English-pinned by run()/withEnglishEnv()
+  // Header: the install-confirmation line.
+  assert.match(out, /Your AI collaboration pack is installed/, "the install-confirmation header is present");
+  // The scaffolding positioning (the central metaphor) survives.
+  assert.match(out, /scaffolding for the AI/, "the scaffolding positioning is present");
+
+  // All SIX layers (by their English labels) appear — none silently dropped.
+  for (const layer of ["Profile", "Context", "Acceptance", "Guard", "Handoff", "Harvest"]) {
+    assert.match(out, new RegExp(`\\b${layer}\\b`), `the "${layer}" layer is listed`);
+  }
+
+  // The three advertised keyword triggers are all there.
+  assert.match(out, /collision mode/, "the collision-mode keyword is present");
+  assert.match(out, /scan blind spots/, "the scan-blind-spots keyword is present");
+  assert.match(out, /red team/, "the red-team keyword is present");
+
+  // HONESTY: the privacy line is faithful — it says the optional scan step passes your
+  // work through the AI's provider, exactly the way normal chat already does.
+  assert.match(out, /passing it through my provider/, "the honest privacy sentence (provider pass-through) is present");
+  // RED LINE: it must NEVER over-claim privacy as an absolute "zero data leaves".
+  assert.doesNotMatch(out, /zero data leaves/i, "the English intro never over-claims privacy as 'zero data leaves'");
+
+  // The intro CLOSES on the guiding call-to-action question (a real '?').
+  assert.match(out, /Want me to take a look right now\?\s*$/, "the closing guiding question ends the intro");
+});
+
+test("welcome --lang zh: the Chinese intro hard-prints all six layers, the three keywords, the honest privacy line and the closing question", () => {
+  const res = runLang("zh", ["welcome"]);
+  assert.equal(res.status, 0, "welcome --lang zh exits cleanly");
+  const out = res.stdout;
+  // The Chinese header + scaffolding metaphor.
+  assert.match(out, /协作升级包已装好/, "the Chinese install-confirmation header is present");
+  assert.match(out, /脚手架/, "the Chinese scaffolding metaphor is present");
+
+  // All SIX layers (by their Chinese labels) appear.
+  for (const layer of ["画像", "上下文", "验收", "守卫", "交接", "收割"]) {
+    assert.ok(out.includes(layer), `the "${layer}" layer is listed in Chinese`);
+  }
+
+  // The three keyword triggers, in Chinese.
+  assert.ok(out.includes("碰撞模式"), "the collision-mode keyword is present in Chinese");
+  assert.ok(out.includes("扫描盲区"), "the scan-blind-spots keyword is present in Chinese");
+  assert.ok(out.includes("红队"), "the red-team keyword is present in Chinese");
+
+  // HONESTY: the privacy line keeps the faithful "the tool itself uploads nothing, but
+  // the one scan step goes through the provider like normal chat" framing.
+  assert.match(out, /工具自己不传任何东西/, "the Chinese privacy line keeps 'the tool itself sends nothing' faithful");
+  assert.match(out, /跟你平时聊天一样过一下服务商/, "the Chinese privacy line keeps the provider-pass-through honesty");
+
+  // The intro closes on the guiding question (a full-width '？' or ASCII '?').
+  assert.match(out, /现在就让我扫一眼吗[?？]\s*$/, "the closing guiding question ends the Chinese intro");
+});
+
+test("welcome: --help lists the command and an unknown subcommand still resolves the word", () => {
+  // The command is discoverable in the reference.
+  const help = runCli(["--help"]);
+  assert.match(help, /ai-collab welcome/, "welcome is listed in --help");
+  // The bilingual EN/ZH text bodies live ONLY in the i18n catalog (a sanctioned
+  // bilingual source); cli.js stays English-only. Guard that the Chinese intro is
+  // sourced from the catalog, not hard-coded in cli.js.
+  const cli = read(repoRoot, "src", "cli.js");
+  assert.doesNotMatch(cli, /协作升级包/, "the Chinese welcome body is not hard-coded in cli.js (it lives in i18n)");
+});
+
 // --- a missing-option error renders in the active language ------------------
 test("i18n: a common error (missing --task) renders in the active language", () => {
   // English (the suite default pin) — byte-stable.
