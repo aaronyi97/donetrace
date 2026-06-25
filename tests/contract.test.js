@@ -35,6 +35,7 @@ import {
 } from "../src/sendmodel.js";
 import { FORBIDDEN_IN_PACK, findForbiddenPackFiles } from "../scripts/lib/forbidden-in-pack.js";
 import { skillDefinitions, promptDefinitions, mechanismDefinitions } from "../src/catalog.js";
+import { renderSharedCoreContract } from "../src/render.js";
 import { resolveLocale, t, MESSAGES } from "../src/i18n.js";
 
 const repoRoot = path.resolve(new URL("..", import.meta.url).pathname);
@@ -467,6 +468,138 @@ test("adapter installer inlines the full core contract (no dead link to an uncre
     assert.doesNotMatch(content, /if it exists/i, `${relative} reintroduced the dead-link "if it exists" wording`);
     assert.doesNotMatch(content, /when it exists/i, `${relative} reintroduced the dead-link "when it exists" wording`);
   }
+});
+
+// First-run script: the contract must carry the FULL four-step onboarding script
+// (install -> scan -> profile+pain-points -> harvest), not the old short promise.
+// Each step has a load-bearing anchor the script depends on:
+//   Step 0 must show `ai-collab welcome` output VERBATIM (the CLI hard-prints the
+//   canonical intro so it is never re-summarized into something garbled);
+//   Step 2 opens with a GROUNDED profile read that cites real scan evidence and
+//   then WAITs for confirm/correct;
+//   Step 3 raises grounded pain points ONE AT A TIME (never a wall-of-text list);
+//   Step 4 HARVESTs what THIS conversation produced;
+//   and a PLAIN-LANGUAGE hard rule runs throughout (translate task titles to
+//   everyday words). If a future edit collapses this back to a single paragraph,
+//   the missing anchors fail here. The contract body is the live render output, so
+//   this also guards the .aict copy and every adapters-install entrypoint at once.
+test("first-run promise is the full four-step onboarding script (welcome-verbatim / grounded profile / one-at-a-time / harvest / plain-language)", () => {
+  const contract = renderSharedCoreContract();
+
+  // The four steps are all present, in order.
+  const iStep0 = contract.indexOf("Step 0");
+  const iStep1 = contract.indexOf("Step 1");
+  const iStep2 = contract.indexOf("Step 2");
+  const iStep3 = contract.indexOf("Step 3");
+  const iStep4 = contract.indexOf("Step 4");
+  for (const [label, idx] of [["Step 0", iStep0], ["Step 1", iStep1], ["Step 2", iStep2], ["Step 3", iStep3], ["Step 4", iStep4]]) {
+    assert.ok(idx > 0, `first-run script is missing ${label}`);
+  }
+  assert.ok(
+    iStep0 < iStep1 && iStep1 < iStep2 && iStep2 < iStep3 && iStep3 < iStep4,
+    "the four steps must appear in order 0 -> 1 -> 2 -> 3 -> 4"
+  );
+
+  // Step 0: show `welcome` output VERBATIM, do not re-summarize.
+  assert.match(contract, /ai-collab welcome/, "Step 0 must run `ai-collab welcome`");
+  assert.match(contract, /VERBATIM/, "Step 0 must show the welcome output VERBATIM");
+  assert.match(contract, /do not re-summarize|do NOT re-summarize/i, "Step 0 must forbid re-summarizing the canonical intro");
+
+  // Step 2: a GROUNDED profile read tied to real scan evidence, then WAIT to confirm.
+  assert.match(contract, /GROUNDED read/i, "Step 2 must open with a grounded profile read");
+  assert.match(contract, /cite real scan evidence/i, "Step 2 must require citing real scan evidence");
+  assert.match(contract, /did I get this right/i, "Step 2 must ask the user to confirm the read");
+  assert.match(contract, /\bWAIT\b/, "Step 2 must WAIT for confirm/correct before continuing");
+  // It must explicitly reject an ungrounded personality guess (the trust-killer).
+  assert.match(contract, /fortune-telling/i, "Step 2 must reject ungrounded personality guesses as fortune-telling");
+
+  // Step 3: grounded pain points, ONE AT A TIME, never invented.
+  assert.match(contract, /ONE AT A TIME/, "Step 3 must surface pain points one at a time");
+  assert.match(contract, /NEVER invent/i, "Step 3 must never invent a pain point");
+  assert.match(contract, /want me to expand[^.]*move to the next/i, "Step 3 must end each point with expand-or-next");
+
+  // Step 4: harvest THIS conversation (profile + the point they cared about), with a save action.
+  assert.match(contract, /#### Step 4 — Harvest/, "Step 4 must be the harvest step");
+  assert.match(contract, /THIS conversation/, "Step 4 must recap what THIS conversation produced");
+  assert.match(contract, /take effect/i, "Step 4 must land on a concrete save-now action");
+
+  // Plain-language hard rule throughout (translate task titles before speaking).
+  assert.match(contract, /PLAIN LANGUAGE/, "the script must carry a plain-language hard rule");
+  assert.match(contract, /login stuff/, "the plain-language rule must gloss a technical term (auth -> login stuff)");
+});
+
+// Keyword-triggered modes: a user can pull a working mode by name. All five modes
+// must be wired with their trigger words and behavior. These keywords are what the
+// user actually types, so they ship in both Chinese and English; the behavior line
+// is the canonical English. blind-spot-scan is referenced WITHOUT a hard dependency
+// on a package existing (batch 3 adds it), so the reference must be phrased
+// conditionally — never as a dead link to a file that is not there yet.
+test("coaching layer ships the keyword-triggered modes table (collision / blind-spot / red-team / dual-guard / root-cause)", () => {
+  const contract = renderSharedCoreContract();
+
+  assert.match(contract, /Keyword-triggered modes/, "the coaching layer must have a keyword-triggered modes section");
+
+  // Each mode: a representative trigger keyword AND its mode label.
+  for (const [keyword, mode] of [
+    ["碰撞模式", "COLLISION"],
+    ["扫描盲区", "BLIND-SPOT SCAN"],
+    ["红队", "RED TEAM"],
+    ["双守卫", "DUAL GUARD"],
+    ["根因", "ROOT CAUSE"]
+  ]) {
+    assert.ok(contract.includes(keyword), `keyword table missing trigger word "${keyword}"`);
+    assert.ok(contract.includes(mode), `keyword table missing mode "${mode}"`);
+  }
+
+  // English triggers are present too (the table is bilingual).
+  for (const enTrigger of ["think with me", "blind spots", "red team", "dual guard", "root cause"]) {
+    assert.ok(contract.includes(enTrigger), `keyword table missing English trigger "${enTrigger}"`);
+  }
+
+  // blind-spot-scan is referenced softly: the line must NOT assert the mechanism
+  // file exists unconditionally (it does not ship until a later batch).
+  const blindLine = contract
+    .split("\n")
+    .find((line) => line.includes("BLIND-SPOT SCAN"));
+  assert.ok(blindLine, "the blind-spot line must exist");
+  assert.match(
+    blindLine,
+    /if a `?mechanisms\/blind-spot-scan`? .*is present|otherwise run/i,
+    "the blind-spot-scan reference must be conditional, not a hard dependency on an unshipped file"
+  );
+});
+
+// The four-step script and the keyword table are not just in render output — they
+// must reach the rule files a real tool reads. adapters install inlines the live
+// contract, so the entrypoints carry the same anchors. This locks the wiring end to
+// end: change render.js, and CLAUDE.md / AGENTS.md / ... carry the new script.
+test("adapters install entrypoints carry the four-step script and keyword modes (end-to-end wiring)", () => {
+  const target = mkdtempSync(path.join(tmpdir(), "aicos-firstrun-entrypoints-"));
+  runCli(["adapters", "install", "--target", target, "--tool", "all"]);
+
+  for (const relative of ["AGENTS.md", "CLAUDE.md", ".cursor/rules/ai-collab.mdc", ".clinerules"]) {
+    const content = read(target, relative);
+    assert.match(content, /Step 0/, `${relative} missing the four-step first-run script (Step 0)`);
+    assert.match(content, /VERBATIM/, `${relative} missing the welcome-verbatim instruction`);
+    assert.match(content, /ONE AT A TIME/, `${relative} missing the one-at-a-time pain-point rule`);
+    assert.match(content, /PLAIN LANGUAGE/, `${relative} missing the plain-language hard rule`);
+    assert.match(content, /Keyword-triggered modes/, `${relative} missing the keyword-triggered modes table`);
+    assert.match(content, /COLLISION/, `${relative} missing the collision keyword mode`);
+  }
+});
+
+// Freshness lock: the committed .aict/adapters/SHARED_CORE_CONTRACT.md is a GENERATED
+// file. It must match a fresh render exactly, so an edit to render.js that is not
+// re-generated into .aict is caught here (the same guard the generated START_HERE.md
+// already has). Without this, the published pack could ship a stale contract while
+// the live render and the entrypoints carry the new script.
+test("committed .aict/adapters/SHARED_CORE_CONTRACT.md matches a fresh render (no stale generated copy)", () => {
+  const committed = read(repoRoot, ".aict", "adapters", "SHARED_CORE_CONTRACT.md");
+  assert.equal(
+    committed,
+    renderSharedCoreContract(),
+    "committed .aict/adapters/SHARED_CORE_CONTRACT.md is stale — re-run `init --force` and copy it back"
+  );
 });
 
 // Feature B (unit): confirmedProfileLearnings is the single selector deciding WHICH
