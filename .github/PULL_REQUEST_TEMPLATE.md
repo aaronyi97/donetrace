@@ -4,12 +4,12 @@ What changed?
 
 ## User-facing path checked
 
-Before publish these run as `node bin/ai-collab.js <args>` from a clone; the global `ai-collab` name works after publish.
+These run under the global `ai-collab` name after `npm install -g ai-collab-open-system`; from a clone, `node bin/ai-collab.js <args>` is the same entry.
 
-- [ ] `node bin/ai-collab.js init --target <dir>`
-- [ ] `node bin/ai-collab.js guide`
-- [ ] `node bin/ai-collab.js demo`
-- [ ] `node bin/ai-collab.js check --workspace <dir>`
+- [ ] `ai-collab init --target <dir>`
+- [ ] `ai-collab guide`
+- [ ] `ai-collab demo`
+- [ ] `ai-collab check --workspace <dir>`
 
 ## Verification
 

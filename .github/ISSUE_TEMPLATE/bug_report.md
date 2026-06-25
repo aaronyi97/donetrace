@@ -13,10 +13,10 @@ Describe the problem in one or two concrete sentences.
 ## Reproduction
 
 ```bash
-node bin/ai-collab.js --help
+ai-collab --help
 ```
 
-The package is not published to npm yet, so run from a clone with `node bin/ai-collab.js` (the global `ai-collab` command only exists after publish). Replace the command above with the smallest command or file path that reproduces the issue.
+Install globally with `npm install -g ai-collab-open-system`, or from a clone replace `ai-collab` with `node bin/ai-collab.js`. Replace the command above with the smallest command or file path that reproduces the issue.
 
 ## Expected behavior
 

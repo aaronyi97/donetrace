@@ -1,14 +1,13 @@
 # Changelog
 
-This project's source is on GitHub with CI green, but it is **not published to npm**. The version
-below is prepared and unpublished; see [Release Status](./README.md#release-status) for the
-four-state ladder.
+This project is **published to npm** as `ai-collab-open-system`, and the global `ai-collab` command
+is live. See [Release Status](./README.md#release-status) for the four-state ladder it moved through.
 
-## 0.1.0 — Unreleased (GitHub source on `main`, CI green)
+## 0.1.0 — 2026-06-25 (published to npm)
 
-Status: source pushed to GitHub on `main` with CI green; **not git-tagged and not published to
-npm**. No release date is claimed because no npm release has happened. The date here will be
-filled in only when the package is actually published.
+Status: published to npm as `ai-collab-open-system@0.1.0`; the global `ai-collab` command installs via
+`npm install -g ai-collab-open-system` and every documented command works as written. Source is on
+GitHub `main` with CI green.
 
 - Hardened CI: Node 18/20/22 matrix running `npm ci`, `npm run check`, `npm pack`, a fresh-tarball
   install smoke test (install the packed artifact into a clean dir and run the installed `ai-collab`
