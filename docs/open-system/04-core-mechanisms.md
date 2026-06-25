@@ -9,6 +9,7 @@ The AI Collaboration Open System ships local-first mechanism packages in `.aict/
 - One-Click Dispatch: compact work packet for another AI tool.
 - Task Splitting: a five-question pre-dispatch self-check; if any answer is yes, split the task by topic or deliverable (not line count) into self-contained sub-packets so an oversized prompt does not stall or degrade.
 - Anti-Drift Partner: a long thinking conversation with an AI that pushes back instead of agreeing — it surfaces blind spots, probes at most two rounds, then commits to a judgment, so the talk never drifts into fluent confirmation.
+- Blind-Spot Scan: borrows an outside viewpoint (customer, competitor, expert, opponent, your-future-self), re-reads the decision through that seat, and returns the concrete dead angles you cannot see from your own plus the one counter-question most worth sitting with — and the borrowed viewpoint must genuinely challenge, never flatter from a costume.
 - Root-Cause Brake: when the same artifact is rejected twice in a row, the brake trips — no more patches until four diagnostic questions are answered, the real cause is named, and the next version is rebuilt around it.
 - Half-Product Review: blocks release claims when docs outrun runnable proof.
 - Handoff A/B/C: three handoff modes for three situations - A high-interaction (lightweight same-tool resume), B programmatic (a defined task an executor drives to completion), C delivery overview (a human-facing account of a finished phase) - all carrying the same load-bearing fields.

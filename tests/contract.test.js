@@ -34,7 +34,7 @@ import {
   DEFAULT_MODEL_CMD
 } from "../src/sendmodel.js";
 import { FORBIDDEN_IN_PACK, findForbiddenPackFiles } from "../scripts/lib/forbidden-in-pack.js";
-import { skillDefinitions, promptDefinitions, mechanismDefinitions } from "../src/catalog.js";
+import { skillDefinitions, promptDefinitions, mechanismDefinitions, requiredMechanismIds } from "../src/catalog.js";
 import { renderSharedCoreContract } from "../src/render.js";
 import { resolveLocale, t, MESSAGES } from "../src/i18n.js";
 
@@ -567,6 +567,54 @@ test("coaching layer ships the keyword-triggered modes table (collision / blind-
     /if a `?mechanisms\/blind-spot-scan`? .*is present|otherwise run/i,
     "the blind-spot-scan reference must be conditional, not a hard dependency on an unshipped file"
   );
+});
+
+// blind-spot-scan ships as a real mechanism package (the batch the keyword-table
+// comment above anticipated). It must be a first-class catalog mechanism, generate
+// its full 5-file package, and the mechanism count must read 16 everywhere a count
+// is surfaced (the catalog list, the generated mechanisms index, and the manifest).
+// This is the contract that keeps the now-present blind-spot-scan from silently
+// regressing back into the "referenced but unshipped" state the conditional line
+// was a placeholder for.
+test("blind-spot-scan ships as a complete mechanism package and the mechanism count is 16", () => {
+  // (a) It is a first-class catalog mechanism, so requiredMechanismIds carries it.
+  assert.ok(
+    requiredMechanismIds.includes("blind-spot-scan"),
+    "blind-spot-scan must be a catalog mechanism (present in requiredMechanismIds)"
+  );
+
+  // (b) The catalog now defines exactly 16 mechanisms, and every count surface agrees.
+  assert.equal(mechanismDefinitions.length, 16, "the catalog must define exactly 16 mechanisms");
+
+  // (c) A fresh workspace ships the full blind-spot-scan package: all five files,
+  // each carrying the public-OS framing and no placeholder text.
+  const target = mkdtempSync(path.join(tmpdir(), "aicos-blind-spot-scan-"));
+  runCli(["init", "--target", target, "--force"]);
+  const workspace = path.join(target, ".aict");
+  const requiredFiles = ["README.md", "PROMPT.md", "TEMPLATE.md", "EXAMPLE.synthetic.md", "FAILURE_MODES.md"];
+  for (const file of requiredFiles) {
+    const content = read(workspace, "mechanisms", "blind-spot-scan", file);
+    assert.match(content, /AI Collaboration Open System|local-first|public-safe/i, `blind-spot-scan/${file} missing public OS framing`);
+    assert.doesNotMatch(content, /TBD|TODO|placeholder/i, `blind-spot-scan/${file} contains placeholder text`);
+  }
+
+  // (d) Its README must carry the outside-view substance: the borrowed-viewpoint menu,
+  // the single counter-question, and the explicit "must not flatter" honesty rule —
+  // so the package cannot be gutted into a generic critique mechanism.
+  const readme = read(workspace, "mechanisms", "blind-spot-scan", "README.md");
+  assert.match(readme, /Blind-Spot Scan/, "blind-spot-scan README must carry its title");
+  assert.match(readme, /customer|competitor|expert|opponent/i, "blind-spot-scan README must name the outside viewpoints it borrows");
+  assert.match(readme, /counter-question/i, "blind-spot-scan README must keep the one-counter-question output");
+  assert.match(readme, /flatter|costume|genuinely challenge/i, "blind-spot-scan README must keep the no-fake-outside-view honesty rule");
+
+  // (e) The generated mechanisms index header and the manifest both report 16.
+  const mechanismsIndex = read(workspace, "mechanisms", "README.md");
+  assert.match(mechanismsIndex, /## The 16 mechanisms/, "the generated mechanisms index must read '## The 16 mechanisms'");
+  assert.match(mechanismsIndex, /blind-spot-scan\//, "the generated mechanisms index must list blind-spot-scan");
+
+  const manifest = JSON.parse(read(workspace, "WORKSPACE_MANIFEST.json"));
+  assert.equal(manifest.mechanisms.length, 16, "the workspace manifest must declare 16 mechanisms");
+  assert.ok(manifest.mechanisms.includes("blind-spot-scan"), "the workspace manifest must list blind-spot-scan");
 });
 
 // The four-step script and the keyword table are not just in render output — they

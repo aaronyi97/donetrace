@@ -10,13 +10,14 @@ The reusable collaboration moves of the AI Collaboration Open System. Each one i
 
 These are the standing moves; the six layers (profile, context, acceptance, guard, handoff, harvest) are the spine they plug into, and the `cookbook/` recipes show how to run them on a real task.
 
-## The 15 mechanisms
+## The 16 mechanisms
 
 - `dual-guard/` — **Dual Guard.** Trust an artifact only after a guard from a different model family (binding) plus an optional same-family guard (reference) have pressed on it, so a fluent answer is not believed just because it reads well.
 - `scout-review-controller/` — **SCOUT Review Controller.** Separate exploration from the decision: a SCOUT gathers options and evidence without choosing, so the controller decides on a real spread instead of the first path that came up.
 - `one-click-dispatch/` — **One-Click Dispatch.** Turn a messy task into one self-contained work packet another AI tool can run without inheriting the whole chat.
 - `task-splitting/` — **Task Splitting.** Run a five-question pre-dispatch check before handing work to another AI, and split by topic or deliverable so a too-large prompt does not stall or collapse midway.
 - `anti-drift-partner/` — **Anti-Drift Partner.** Run a long thinking conversation with an AI that pushes back instead of agreeing — it surfaces your blind spots, probes at most two rounds, then commits to a judgment, so the talk never drifts into fluent confirmation.
+- `blind-spot-scan/` — **Blind-Spot Scan.** Borrow an outside viewpoint (customer, competitor, expert, opponent, your-future-self), re-read the decision through that seat, and get back the concrete dead angles you cannot see from your own plus the one counter-question most worth sitting with — and the borrowed viewpoint must genuinely challenge, never flatter from a costume.
 - `root-cause-brake/` — **Root-Cause Brake.** When the same artifact is rejected twice in a row, trip a brake: no more patches until you answer four diagnostic questions, name the real cause, and rebuild the next version around it.
 - `half-product-review/` — **Half-Product Review.** Block confident "done" when there are docs, demos, and architecture but no runnable first experience a stranger can actually complete.
 - `handoff-abc/` — **Handoff A/B/C.** Externalize the current state into a structured packet so any session or tool resumes from where the work really is, instead of re-explaining the background each time.

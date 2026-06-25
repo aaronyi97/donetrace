@@ -180,7 +180,7 @@ This is a collaboration operating system, not a prompt collection. What makes it
 - **A handoff chain** (handoff A/B/C): any session or tool resumes from where the work actually is, instead of you re-explaining the background each time.
 - **A review chain** (dual guard + SCOUT review controller + half-product review): output gets challenged for evidence before it is trusted, and a confident "done" with no runnable proof gets caught.
 - Six collaboration layers behind that chain: profile, context, acceptance, guard review, handoff, harvest.
-- 15 mechanism packages that operate the chains: dual guard, SCOUT review controller, one-click dispatch, task splitting, anti-drift partner, root-cause brake, half-product review, handoff A/B/C, harvest and external recap, do-not-handle-yet, plain-language first screen, honest calibration, feedback-absorption ledger, collaboration coach, and single-tool guard.
+- 16 mechanism packages that operate the chains: dual guard, SCOUT review controller, one-click dispatch, task splitting, anti-drift partner, blind-spot scan, root-cause brake, half-product review, handoff A/B/C, harvest and external recap, do-not-handle-yet, plain-language first screen, honest calibration, feedback-absorption ledger, collaboration coach, and single-tool guard.
 - A complete `.aict/` workspace with `START_HERE.md` and public OS directories: profile, context, acceptance, guard, handoff, harvest, roles, modes, mechanisms, examples, cookbook, and state.
 - Adapter guidance files so common AI tools all work off one shared contract instead of six drifting rule sets.
 - A flagship synthetic case plus additional synthetic cases, and privacy / commercial-boundary docs.

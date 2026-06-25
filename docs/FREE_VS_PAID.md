@@ -11,7 +11,7 @@ Everything you need to run the full collaboration loop yourself, with no part he
 - Complete generic workspace generation (the whole `.aict/` skeleton).
 - `START_HERE.md` and the 10 / 30 / 60-minute walkthroughs.
 - Six collaboration layers (profile, context, acceptance, guard review, handoff, harvest) — each with prompt, template, synthetic example, and failure modes.
-- All 15 mechanism packages (dual guard, SCOUT review controller, one-click dispatch, task splitting, anti-drift partner, root-cause brake, half-product review, handoff A/B/C, harvest and external recap, do-not-handle-yet, plain-language first screen, honest calibration, feedback-absorption ledger, collaboration coach, single-tool guard).
+- All 16 mechanism packages (dual guard, SCOUT review controller, one-click dispatch, task splitting, anti-drift partner, blind-spot scan, root-cause brake, half-product review, handoff A/B/C, harvest and external recap, do-not-handle-yet, plain-language first screen, honest calibration, feedback-absorption ledger, collaboration coach, single-tool guard).
 - The full prompt library.
 - All skill-like files.
 - The cookbook recipes.

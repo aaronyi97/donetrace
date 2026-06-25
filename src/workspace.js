@@ -964,6 +964,8 @@ const MECHANISM_ONE_LINERS = {
     "Run a five-question pre-dispatch check before handing work to another AI, and split by topic or deliverable so a too-large prompt does not stall or collapse midway.",
   "anti-drift-partner":
     "Run a long thinking conversation with an AI that pushes back instead of agreeing — it surfaces your blind spots, probes at most two rounds, then commits to a judgment, so the talk never drifts into fluent confirmation.",
+  "blind-spot-scan":
+    "Borrow an outside viewpoint (customer, competitor, expert, opponent, your-future-self), re-read the decision through that seat, and get back the concrete dead angles you cannot see from your own plus the one counter-question most worth sitting with — and the borrowed viewpoint must genuinely challenge, never flatter from a costume.",
   "root-cause-brake":
     "When the same artifact is rejected twice in a row, trip a brake: no more patches until you answer four diagnostic questions, name the real cause, and rebuild the next version around it.",
   "half-product-review":
