@@ -1,6 +1,6 @@
 # 02 Six-Layer Architecture
 
-The AI Collaboration Open System uses a local-first six-layer architecture. Each layer answers one question and produces one inspectable artifact.
+DoneTrace uses a local-first six-layer architecture. Each layer answers one question and produces one inspectable artifact.
 
 ## 1. Profile
 

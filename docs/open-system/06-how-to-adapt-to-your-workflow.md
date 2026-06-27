@@ -1,6 +1,6 @@
 # 06 How to Adapt to Your Workflow
 
-AI Collaboration Open System is local-first and tool-agnostic. You adapt it by copying files into the AI tools you already use.
+DoneTrace is local-first and tool-agnostic. You adapt it by copying files into the AI tools you already use.
 
 ## Codex
 

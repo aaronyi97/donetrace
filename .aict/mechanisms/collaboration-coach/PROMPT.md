@@ -1,6 +1,6 @@
 # Collaboration Coach Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Make the assistant proactively remind the user of the matching collaboration ste
 ## Copy-paste prompt
 
 ```text
-Use the Collaboration Coach mechanism from my local AI Collaboration Open System workspace.
+Use the Collaboration Coach mechanism from my local DoneTrace workspace.
 
 Purpose:
 Make the assistant proactively remind the user of the matching collaboration step at six recurring moments — define done, review a completion claim, hand off, harvest, update the profile — instead of waiting to be asked, so the workspace teaches itself while the user works rather than sitting unused behind a manual. The hard constraint is restraint: prompt at key moments only, once per moment, never every turn, because over-prompting is the fastest way to get the whole system uninstalled.

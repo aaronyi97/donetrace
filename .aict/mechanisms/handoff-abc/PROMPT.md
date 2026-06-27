@@ -1,6 +1,6 @@
 # Handoff A/B/C Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Externalize the current state into a structured handoff packet so ANY AI or sess
 ## Copy-paste prompt
 
 ```text
-Use the Handoff A/B/C mechanism from my local AI Collaboration Open System workspace.
+Use the Handoff A/B/C mechanism from my local DoneTrace workspace.
 
 Purpose:
 Externalize the current state into a structured handoff packet so ANY AI or session can pick up from where the work actually is, instead of the human re-explaining the background every time a tool or session changes. A/B/C are three handoff modes for three situations: A = high-interaction handoff (a human and AI trading turns inside the same tool, lightweight resume); B = programmatic handoff (a clear task an executor picks up and drives to completion on its own); C = delivery overview (a human-facing total account of what one phase produced). Whichever mode, the packet carries the same load-bearing fields so the receiver never starts from zero.

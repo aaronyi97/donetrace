@@ -1,6 +1,6 @@
 # 03 Role System
 
-The AI Collaboration Open System uses roles to separate responsibility. Roles are public-safe collaboration boundaries, not secret authority.
+DoneTrace uses roles to separate responsibility. Roles are public-safe collaboration boundaries, not secret authority.
 
 Each role is defined as a responsibility matrix rather than a two-line "does / does not". A matrix states six things — what the role **can do**, what it **cannot do**, what it takes **in**, what it produces **out**, who it **escalates to** when something exceeds its authority, and a concrete **overreach example** of what breaks when the boundary is crossed. The full role cards live in `.aict/roles/`; the summaries below mirror them.
 

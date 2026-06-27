@@ -1,6 +1,6 @@
 # Dual Guard Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -11,7 +11,7 @@ Don't have a second model family yet? See the cookbook recipe `../../cookbook/br
 ## Copy-paste prompt
 
 ```text
-Use the Dual Guard mechanism from my local AI Collaboration Open System workspace.
+Use the Dual Guard mechanism from my local DoneTrace workspace.
 
 Purpose:
 Cancel shared blind spots with structure instead of a stronger model: a guard from a different model family is the binding gate, and a same-family guard is a non-binding reference, so a fluent answer cannot be trusted just because it reads well.

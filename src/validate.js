@@ -1164,7 +1164,7 @@ export function validateWorkspace(workspace) {
     for (const file of ["README.md", "PROMPT.md", "TEMPLATE.md", "EXAMPLE.synthetic.md", "FAILURE_MODES.md"]) {
       const content = requireFile(errors, workspace, "mechanisms", mechanism, file);
       checks += 1;
-      includesAll(errors, `${mechanism}/${file}`, content, ["AI Collaboration Open System", "local-first", "public-safe"]);
+      includesAll(errors, `${mechanism}/${file}`, content, ["DoneTrace", "local-first", "public-safe"]);
       if (/TBD|TODO|placeholder/i.test(content)) errors.push(`${mechanism}/${file} contains placeholder text`);
     }
   }

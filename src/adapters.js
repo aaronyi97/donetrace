@@ -259,7 +259,7 @@ function backupPathFor(file) {
 }
 
 function renderAdapterEntrypoint(entry, preferences = []) {
-  return `# AI Collaboration Open System Adapter Guidance
+  return `# DoneTrace Adapter Guidance
 
 This file is adapter guidance for ${entry.tool}. It is not a deep integration, background agent, telemetry hook, or hosted memory service.
 

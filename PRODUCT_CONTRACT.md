@@ -1,4 +1,4 @@
-# AI Collaboration Open System - Product Contract
+# DoneTrace - Product Contract
 
 Status: source-of-truth draft
 Scope: public open-source project contract

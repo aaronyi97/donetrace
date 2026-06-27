@@ -1,6 +1,6 @@
 # Do Not Handle Yet Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Protect the main line by explicitly parking tempting but lower-priority work.
 ## Copy-paste prompt
 
 ```text
-Use the Do Not Handle Yet mechanism from my local AI Collaboration Open System workspace.
+Use the Do Not Handle Yet mechanism from my local DoneTrace workspace.
 
 Purpose:
 Protect the main line by explicitly parking tempting but lower-priority work.

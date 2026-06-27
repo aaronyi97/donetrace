@@ -1,6 +1,6 @@
 # 04 Core Mechanisms
 
-The AI Collaboration Open System ships local-first mechanism packages in `.aict/mechanisms/`. Each package has README, prompt, template, synthetic example, and failure modes.
+DoneTrace ships local-first mechanism packages in `.aict/mechanisms/`. Each package has README, prompt, template, synthetic example, and failure modes.
 
 ## Mechanisms
 

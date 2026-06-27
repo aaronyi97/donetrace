@@ -1,6 +1,6 @@
 # Root-Cause Brake Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Stop a patch-on-patch death spiral by treating repeated rejection as a signal to
 ## Copy-paste prompt
 
 ```text
-Use the Root-Cause Brake mechanism from my local AI Collaboration Open System workspace.
+Use the Root-Cause Brake mechanism from my local DoneTrace workspace.
 
 Purpose:
 Stop a patch-on-patch death spiral by treating repeated rejection as a signal to fix the cause, not the symptom. When the same artifact gets sent back twice in a row, an automatic brake trips: you may NOT ship another patched version. You must first stop and answer four diagnostic questions — is there a contract conflict, is the verification fake, is the scope too big, is the work split wrong — decide the real root cause, and only then write the next version, rebuilt around that cause instead of carrying forward another layer of fixes.

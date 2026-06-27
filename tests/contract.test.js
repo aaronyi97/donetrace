@@ -594,7 +594,7 @@ test("blind-spot-scan ships as a complete mechanism package and the mechanism co
   const requiredFiles = ["README.md", "PROMPT.md", "TEMPLATE.md", "EXAMPLE.synthetic.md", "FAILURE_MODES.md"];
   for (const file of requiredFiles) {
     const content = read(workspace, "mechanisms", "blind-spot-scan", file);
-    assert.match(content, /AI Collaboration Open System|local-first|public-safe/i, `blind-spot-scan/${file} missing public OS framing`);
+    assert.match(content, /DoneTrace|local-first|public-safe/i, `blind-spot-scan/${file} missing public OS framing`);
     assert.doesNotMatch(content, /TBD|TODO|placeholder/i, `blind-spot-scan/${file} contains placeholder text`);
   }
 
@@ -777,7 +777,7 @@ test("adapter --force backs up existing user-owned instruction files", () => {
   const output = runCli(["adapters", "install", "--target", target, "--force", "--tool", "all"]);
 
   assert.match(output, /Backups: [1-9]/);
-  assert.match(read(target, "AGENTS.md"), /AI Collaboration Open System Adapter Guidance/);
+    assert.match(read(target, "AGENTS.md"), /DoneTrace Adapter Guidance/);
 
   const backups = readdirSync(target)
     .filter((entry) => entry.startsWith("AGENTS.md.aict-backup-"))
@@ -875,7 +875,7 @@ test("adapters install --tool auto does NOT detect copilot from a plain .github/
   assert.match(detectOutput, /detected: copilot/);
   assert.match(
     read(withCopilot, ".github", "copilot-instructions.md"),
-    /AI Collaboration Open System Adapter Guidance/,
+    /DoneTrace Adapter Guidance/,
     "the real copilot marker must let auto install copilot guidance"
   );
 });
@@ -1186,7 +1186,7 @@ test("public edition includes the open-system book and public mapping", () => {
 
   for (const file of requiredDocs) {
     const content = read(openSystemDir, file);
-    assert.match(content, /AI Collaboration Open System|AI collaboration OS|AI 协作/i, `${file} missing system framing`);
+    assert.match(content, /DoneTrace|AI Collaboration Open System|AI collaboration OS|AI 协作/i, `${file} missing system framing`);
     assert.match(content, /local-first|本地优先/i, `${file} missing local-first framing`);
     assert.doesNotMatch(content, /TBD|TODO|placeholder/i, `${file} contains placeholder text`);
   }
@@ -1260,7 +1260,7 @@ test("mechanism packages are complete runnable copy-paste units", () => {
     for (const file of requiredFiles) {
       const content = read(workspace, "mechanisms", mechanism, file);
       assert.match(content, /Purpose|Copy-paste prompt|Template|Synthetic example|Failure modes/i, `${mechanism}/${file} too thin`);
-      assert.match(content, /AI Collaboration Open System|local-first|public-safe/i, `${mechanism}/${file} missing public OS framing`);
+      assert.match(content, /DoneTrace|local-first|public-safe/i, `${mechanism}/${file} missing public OS framing`);
       assert.doesNotMatch(content, /TBD|TODO|placeholder/i, `${mechanism}/${file} contains placeholder text`);
     }
   }
@@ -2162,11 +2162,11 @@ test("B4 #3: package.json carries complete publish-ready metadata (repository/bu
   // repository: an object with a git url pointing at the project repo.
   assert.equal(typeof pkg.repository, "object", "repository must be an object");
   assert.equal(pkg.repository.type, "git", "repository.type must be git");
-  assert.match(pkg.repository.url, /github\.com\/.+\/ai-collab-open-system/i, "repository.url must point at the project repo");
+  assert.match(pkg.repository.url, /github\.com\/.+\/donetrace/i, "repository.url must point at the project repo");
 
   // bugs + homepage: present and project-scoped.
   assert.ok(pkg.bugs && /github\.com\/.+\/issues/i.test(pkg.bugs.url), "bugs.url must be the issues tracker");
-  assert.match(pkg.homepage, /github\.com\/.+\/ai-collab-open-system/i, "homepage must point at the project");
+  assert.match(pkg.homepage, /github\.com\/.+\/donetrace/i, "homepage must point at the project");
 
   // license: the Apache-2.0 the LICENSE file + checklist declare.
   assert.equal(pkg.license, "Apache-2.0", "license must be Apache-2.0 (matches the LICENSE file and RELEASE_CHECKLIST)");

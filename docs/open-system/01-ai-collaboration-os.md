@@ -1,6 +1,6 @@
 # 01 AI Collaboration OS
 
-AI Collaboration Open System is a local-first collaboration operating system for people who use AI tools but do not want the tool to become the center of judgment.
+DoneTrace is a local-first collaboration operating system for people who use AI tools but do not want the tool to become the center of judgment.
 
 ## Core idea
 

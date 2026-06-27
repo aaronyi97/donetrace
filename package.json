@@ -1,6 +1,6 @@
 {
   "name": "ai-collab-open-system",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "DoneTrace is a local-first open-source AI collaboration workspace with profile, context, acceptance, guard, handoff, and harvest structure.",
   "type": "module",
   "bin": {
@@ -34,12 +34,12 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aaronyi97/ai-collab-open-system.git"
+    "url": "git+https://github.com/aaronyi97/donetrace.git"
   },
   "bugs": {
-    "url": "https://github.com/aaronyi97/ai-collab-open-system/issues"
+    "url": "https://github.com/aaronyi97/donetrace/issues"
   },
-  "homepage": "https://github.com/aaronyi97/ai-collab-open-system#readme",
+  "homepage": "https://github.com/aaronyi97/donetrace#readme",
   "files": [
     ".aict",
     "bin",

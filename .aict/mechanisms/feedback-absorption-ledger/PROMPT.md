@@ -1,6 +1,6 @@
 # Feedback Absorption Ledger Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Keep independent judgment alive when you are synthesizing feedback from several 
 ## Copy-paste prompt
 
 ```text
-Use the Feedback Absorption Ledger mechanism from my local AI Collaboration Open System workspace.
+Use the Feedback Absorption Ledger mechanism from my local DoneTrace workspace.
 
 Purpose:
 Keep independent judgment alive when you are synthesizing feedback from several sources by scoring each incoming point across five tiers instead of silently rubber-stamping all of it: absorb fully, absorb and refine, absorb with a boundary, partly absorb, or reject with a reason. The trap this defends against is the controller who collects three reviews and quietly accepts everything, becoming a courier for other people's opinions; the equal-and-opposite trap is reflexively rejecting things to look independent. The ledger forces a per-item decision with a stated reason, and treats the absorb/reject ratio as an OUTCOME of honest judgment, never a target to hit.

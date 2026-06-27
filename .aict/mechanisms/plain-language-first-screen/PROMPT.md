@@ -1,6 +1,6 @@
 # Plain-Language First Screen Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Make the first screen explain the result, path, and proof before concepts or fra
 ## Copy-paste prompt
 
 ```text
-Use the Plain-Language First Screen mechanism from my local AI Collaboration Open System workspace.
+Use the Plain-Language First Screen mechanism from my local DoneTrace workspace.
 
 Purpose:
 Make the first screen explain the result, path, and proof before concepts or framework names.

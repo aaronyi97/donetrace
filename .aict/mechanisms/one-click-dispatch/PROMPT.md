@@ -1,6 +1,6 @@
 # One-Click Dispatch Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Turn a messy task into a compact work packet another AI tool can execute without
 ## Copy-paste prompt
 
 ```text
-Use the One-Click Dispatch mechanism from my local AI Collaboration Open System workspace.
+Use the One-Click Dispatch mechanism from my local DoneTrace workspace.
 
 Purpose:
 Turn a messy task into a compact work packet another AI tool can execute without inheriting the whole chat.

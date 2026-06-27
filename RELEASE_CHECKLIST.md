@@ -4,7 +4,7 @@ Use this before labeling a commit as a public release candidate, and to move it 
 release states. The four states are defined in [README Release Status](./README.md#release-status):
 **local candidate → publishable candidate → GitHub source release → npm package**.
 
-Current state of `main`: **npm package** (published to npm as `ai-collab-open-system@0.1.1`; the
+Current state of `main`: **npm package** (published to npm as `ai-collab-open-system@0.1.2`; the
 global `ai-collab` command is live). All automated gates are green (`npm test`, `npm run check` —
 contract + privacy + pack — and `npm pack --dry-run`), the source is on GitHub with CI green, and
 the package is installable from npm. The boxes below are kept as the reusable release procedure
@@ -60,7 +60,7 @@ and the *installed* `ai-collab` bin runs — not just that the source tree runs.
 
 These are the steps (and their state gates) that take this repo from earliest build all the way to
 a published **npm package**. Each step is also a re-verification point. Steps 1–3 are done for
-`0.1.1` (the package is published); re-run this same procedure for the next version.
+`0.1.2` (the package is published); re-run this same procedure for the next version.
 
 1. **local candidate → publishable candidate** (done)
    - [x] All "Required local checks", "Fresh-tarball install smoke", and "Safety and honesty" boxes above are green.

@@ -303,7 +303,7 @@ export function workspaceManifest() {
   ];
   return {
     name: "DoneTrace Workspace",
-    version: "0.1.1",
+    version: "0.1.2",
     localFirst: true,
     defaultNetworkUse: "none",
     workspaceDirs,
@@ -512,7 +512,7 @@ Use this before publishing an example or sharing a workspace.
 export function rolesReadme() {
   return `# Roles
 
-Roles keep the AI Collaboration Open System human-centered. They define responsibility, not hidden authority.
+Roles keep DoneTrace human-centered. They define responsibility, not hidden authority.
 
 Each role card below is a responsibility matrix, not a vibe. It states six things so two different tools (or two different sessions) read the same boundary: what the role CAN do, what it CANNOT do, what it takes in, what it produces, who it escalates to when something exceeds its authority, and one synthetic overreach example showing what breaks when the boundary is crossed.
 
@@ -998,7 +998,7 @@ export function mechanismsReadme() {
   });
   return `# Mechanisms
 
-The reusable collaboration moves of the AI Collaboration Open System. Each one is a local-first, public-safe Markdown package you can copy-paste into any AI tool. A mechanism is a self-contained directory with five files:
+The reusable collaboration moves of DoneTrace. Each one is a local-first, public-safe Markdown package you can copy-paste into any AI tool. A mechanism is a self-contained directory with five files:
 
 - \`README.md\` — what it is, when to use it, and when not to.
 - \`PROMPT.md\` — the copy-paste prompt that runs it.
@@ -1021,7 +1021,7 @@ Open the mechanism's \`README.md\` to confirm it fits, copy the body of its \`PR
 export function cookbookReadme() {
   return `# Cookbook
 
-Do-it recipes for running the AI Collaboration Open System. Each recipe is a full configuration: when to use it, prerequisites, steps, a copy-paste block you can actually run, expected output, failure handling, a privacy note, and a next step. The walkthroughs are operation cards ("press these in this order"); these recipes explain why each step exists and how to adapt it to your own task.
+Do-it recipes for running DoneTrace. Each recipe is a full configuration: when to use it, prerequisites, steps, a copy-paste block you can actually run, expected output, failure handling, a privacy note, and a next step. The walkthroughs are operation cards ("press these in this order"); these recipes explain why each step exists and how to adapt it to your own task.
 
 - \`run-a-first-loop.md\`: run one complete collaboration loop end to end on your own real task; the prepared synthetic case is an optional "watch the flow first" track.
 - \`connect-a-tool.md\`: wire any AI tool (general chat AI, coding assistant, command-line AI) to the shared contract by copying files into its instruction slot.

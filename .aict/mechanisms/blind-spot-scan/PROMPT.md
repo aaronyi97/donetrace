@@ -1,6 +1,6 @@
 # Blind-Spot Scan Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Surface the dead angles you cannot see from your own seat by borrowing an outsid
 ## Copy-paste prompt
 
 ```text
-Use the Blind-Spot Scan mechanism from my local AI Collaboration Open System workspace.
+Use the Blind-Spot Scan mechanism from my local DoneTrace workspace.
 
 Purpose:
 Surface the dead angles you cannot see from your own seat by borrowing an outside viewpoint and re-reading the discussion through it, instead of stress-testing your own logic from the inside. Your own position has a fixed line of sight: the assumptions that feel obvious, the stakeholders you have stopped picturing, the failure that is invisible precisely because it sits where you are standing. This mechanism deliberately swaps the eyes — a customer, a competitor, a domain expert, an opponent, the version of you three years out — and asks what THAT viewpoint would notice that you did not, then hands back a short list of concrete blind spots plus the one counter-question most worth sitting with.

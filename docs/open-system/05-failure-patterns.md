@@ -1,6 +1,6 @@
 # 05 Failure Patterns
 
-AI Collaboration Open System exists because local-first AI work fails in repeatable ways when everything stays inside a single chat.
+DoneTrace exists because local-first AI work fails in repeatable ways when everything stays inside a single chat.
 
 ## Smooth wrong answer
 

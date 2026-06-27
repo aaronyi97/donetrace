@@ -1,6 +1,6 @@
 # Anti-Drift Partner Synthetic Example
 
-This is a public-safe synthetic example for the AI Collaboration Open System. It is local-first and contains no private account, customer, route, hook, or conversation material.
+This is a public-safe synthetic example for DoneTrace. It is local-first and contains no private account, customer, route, hook, or conversation material.
 
 ## Synthetic example
 

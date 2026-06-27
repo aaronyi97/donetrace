@@ -718,7 +718,7 @@ Follow the coaching layer in SHARED_CORE_CONTRACT.md: proactively remind me at k
 export function renderMechanismReadme(mechanism) {
   return `# ${mechanism.title}
 
-Part of the AI Collaboration Open System. This is a local-first, public-safe mechanism package you can copy into Claude Code, Codex, Cursor, Cline, Windsurf, or Copilot.
+Part of DoneTrace. This is a local-first, public-safe mechanism package you can copy into Claude Code, Codex, Cursor, Cline, Windsurf, or Copilot.
 
 ## Purpose
 
@@ -764,7 +764,7 @@ export function renderMechanismPrompt(mechanism) {
       : "";
   return `# ${mechanism.title} Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -773,7 +773,7 @@ ${mechanism.purpose}${secondFamilyPointer}
 ## Copy-paste prompt
 
 \`\`\`text
-Use the ${mechanism.title} mechanism from my local AI Collaboration Open System workspace.
+Use the ${mechanism.title} mechanism from my local DoneTrace workspace.
 
 Purpose:
 ${mechanism.purpose}
@@ -806,7 +806,7 @@ Rules:
 export function renderMechanismTemplate(mechanism) {
   return `# ${mechanism.title} Template
 
-AI Collaboration Open System mechanism card. Fill this in a local-first workflow with public-safe or redacted material.
+DoneTrace mechanism card. Fill this in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -834,7 +834,7 @@ function filledExampleBody(filled) {
 export function renderMechanismExample(mechanism) {
   return `# ${mechanism.title} Synthetic Example
 
-This is a public-safe synthetic example for the AI Collaboration Open System. It is local-first and contains no private account, customer, route, hook, or conversation material.
+This is a public-safe synthetic example for DoneTrace. It is local-first and contains no private account, customer, route, hook, or conversation material.
 
 ## Synthetic example
 
@@ -853,7 +853,7 @@ Copy the shape, not the synthetic facts. Adapt the template to your own redacted
 export function renderMechanismFailures(mechanism) {
   return `# ${mechanism.title} Failure Modes
 
-AI Collaboration Open System failure checklist. Use it in a local-first workflow before trusting a mechanism run, and rewrite any public example into public-safe language.
+DoneTrace failure checklist. Use it in a local-first workflow before trusting a mechanism run, and rewrite any public example into public-safe language.
 
 ## Failure modes
 

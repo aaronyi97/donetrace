@@ -1,6 +1,6 @@
 # Half-Product Review Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Block confident claims when the project has docs, demos, or architecture but no 
 ## Copy-paste prompt
 
 ```text
-Use the Half-Product Review mechanism from my local AI Collaboration Open System workspace.
+Use the Half-Product Review mechanism from my local DoneTrace workspace.
 
 Purpose:
 Block confident claims when the project has docs, demos, or architecture but no runnable first experience.

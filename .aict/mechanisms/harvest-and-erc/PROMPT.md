@@ -1,6 +1,6 @@
 # Harvest and External Recap Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Stop reusable value from leaking away. Valuable decisions, lessons, methods, and
 ## Copy-paste prompt
 
 ```text
-Use the Harvest and External Recap mechanism from my local AI Collaboration Open System workspace.
+Use the Harvest and External Recap mechanism from my local DoneTrace workspace.
 
 Purpose:
 Stop reusable value from leaking away. Valuable decisions, lessons, methods, and stable preferences get buried in long conversations and are never recovered. Harvest sweeps a conversation, lifts the reusable bits into harvest cards (one card per item — a decision, a lesson, a method, a stable preference), the human confirms them, and they land in the right knowledge base. Redaction is a built-in step, not an afterthought: before anything is filed, private material is rewritten into a general, public-safe form. External Recap (ERC) is a separate, dedicated role that runs harvest across MANY conversations at once — guarded by a double lock (a brand-new session AND the human explicitly declaring that role) so an ordinary chat is never swept by accident.

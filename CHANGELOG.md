@@ -3,6 +3,15 @@
 This project is **published to npm** as `ai-collab-open-system`, and the global `ai-collab` command
 is live. See [Release Status](./README.md#release-status) for the four-state ladder it moved through.
 
+## 0.1.2 — 2026-06-27
+
+Status: patch release for public-facing naming consistency before the DoneTrace introduction video.
+
+- Renamed the public GitHub repository surface to `aaronyi97/donetrace`.
+- Updated npm package metadata links (`repository`, `bugs`, `homepage`) to the new GitHub URL.
+- Clarified that **DoneTrace** is the product name while `ai-collab-open-system` remains the npm
+  package name for compatibility with existing installs.
+
 ## 0.1.1 — 2026-06-27
 
 Status: patch release for the published npm package line; `ai-collab-open-system` remains the npm

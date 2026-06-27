@@ -172,7 +172,7 @@ export const MESSAGES = {
       "You do not have to do anything — just reply \"go ahead\" and I will start. Try it once and you will see where it earns its keep. Want me to take a look right now?",
 
     // ---- init (writing) ----
-    "init.created.title": "AI Collaboration Open System workspace created.",
+    "init.created.title": "DoneTrace workspace created.",
     "init.created.body":
       "Workspace: {workspaceRoot}\n" +
       "START_HERE.md: {startHere}\n" +
@@ -456,7 +456,7 @@ Network: not used.
 
     // ---- --help (the main term-light reference). Command SYNTAX stays verbatim in
     //      both languages (it is what the user types); prose is faithfully translated.
-    "help.main": `AI Collaboration Open System
+    "help.main": `DoneTrace
 
 Installed from npm — the global ai-collab command is available everywhere. (From a source clone, the same commands run as node bin/ai-collab.js <command>.)
 

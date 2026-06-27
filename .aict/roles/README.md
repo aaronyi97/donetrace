@@ -1,6 +1,6 @@
 # Roles
 
-Roles keep the AI Collaboration Open System human-centered. They define responsibility, not hidden authority.
+Roles keep DoneTrace human-centered. They define responsibility, not hidden authority.
 
 Each role card below is a responsibility matrix, not a vibe. It states six things so two different tools (or two different sessions) read the same boundary: what the role CAN do, what it CANNOT do, what it takes in, what it produces, who it escalates to when something exceeds its authority, and one synthetic overreach example showing what breaks when the boundary is crossed.
 

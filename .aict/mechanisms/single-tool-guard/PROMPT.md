@@ -1,6 +1,6 @@
 # Single-Tool Guard Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Give a one-model-family user — the realistic default for most solo users, who 
 ## Copy-paste prompt
 
 ```text
-Use the Single-Tool Guard mechanism from my local AI Collaboration Open System workspace.
+Use the Single-Tool Guard mechanism from my local DoneTrace workspace.
 
 Purpose:
 Give a one-model-family user — the realistic default for most solo users, who have exactly one tool — a real guard to START from, not a downgrade to settle for. With a single AI you still turn 'done' into an evidence-backed, re-checkable result. The single-tool guard runs a fresh conversation plus an adversarial reviewer prompt instead of trusting the same assistant that just wrote it. It honestly does NOT equal the cross-family binding gate: it catches fewer real problems, so the verdict is always labeled not-yet-binding, capped at L2, with the residual risk named on the record. The cross-family dual-guard is the upgrade ceiling, not the entry bar.

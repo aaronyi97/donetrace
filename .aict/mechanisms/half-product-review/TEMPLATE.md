@@ -1,6 +1,6 @@
 # Half-Product Review Template
 
-AI Collaboration Open System mechanism card. Fill this in a local-first workflow with public-safe or redacted material.
+DoneTrace mechanism card. Fill this in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 

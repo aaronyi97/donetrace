@@ -1,6 +1,6 @@
 # SCOUT Review Controller Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Separate exploration from decision so the assistant gathers options without prem
 ## Copy-paste prompt
 
 ```text
-Use the SCOUT Review Controller mechanism from my local AI Collaboration Open System workspace.
+Use the SCOUT Review Controller mechanism from my local DoneTrace workspace.
 
 Purpose:
 Separate exploration from decision so the assistant gathers options without prematurely choosing a path.

@@ -1,6 +1,6 @@
 # Collaboration Coach Failure Modes
 
-AI Collaboration Open System failure checklist. Use it in a local-first workflow before trusting a mechanism run, and rewrite any public example into public-safe language.
+DoneTrace failure checklist. Use it in a local-first workflow before trusting a mechanism run, and rewrite any public example into public-safe language.
 
 ## Failure modes
 

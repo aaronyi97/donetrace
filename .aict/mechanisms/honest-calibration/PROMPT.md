@@ -1,6 +1,6 @@
 # Honest Calibration Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Offset the model's built-in eagerness to please by pinning one short user-side p
 ## Copy-paste prompt
 
 ```text
-Use the Honest Calibration mechanism from my local AI Collaboration Open System workspace.
+Use the Honest Calibration mechanism from my local DoneTrace workspace.
 
 Purpose:
 Offset the model's built-in eagerness to please by pinning one short user-side prefix to the front of every ask for a rating, an evaluation, or a recommendation: be candid, do not inflate, do not over-hedge. The point is not to hope the AI will be honest — it is to know that, left uncalibrated, a model slides back toward the answer that makes you feel good, so you re-aim it on each ask. The prefix pulls the baseline from make-you-happy back to tell-the-truth, and it matters most exactly where the temptation to flatter is highest: when you are asking the AI to judge your own work, your own ability, or your own output.

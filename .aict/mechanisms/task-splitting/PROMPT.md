@@ -1,6 +1,6 @@
 # Task Splitting Prompt
 
-This prompt belongs to the AI Collaboration Open System. Use it in a local-first workflow with public-safe or redacted material.
+This prompt belongs to DoneTrace. Use it in a local-first workflow with public-safe or redacted material.
 
 ## Purpose
 
@@ -9,7 +9,7 @@ Before you hand a task to another AI, run a five-question pre-dispatch self-chec
 ## Copy-paste prompt
 
 ```text
-Use the Task Splitting mechanism from my local AI Collaboration Open System workspace.
+Use the Task Splitting mechanism from my local DoneTrace workspace.
 
 Purpose:
 Before you hand a task to another AI, run a five-question pre-dispatch self-check; if any answer is yes, split the task by topic or deliverable (not by line count) into self-contained sub-packets, so a too-large prompt does not stall, overflow the context window, or collapse in quality midway.

@@ -1,6 +1,6 @@
 # Cookbook
 
-Do-it recipes for running the AI Collaboration Open System. Each recipe is a full configuration: when to use it, prerequisites, steps, a copy-paste block you can actually run, expected output, failure handling, a privacy note, and a next step. The walkthroughs are operation cards ("press these in this order"); these recipes explain why each step exists and how to adapt it to your own task.
+Do-it recipes for running DoneTrace. Each recipe is a full configuration: when to use it, prerequisites, steps, a copy-paste block you can actually run, expected output, failure handling, a privacy note, and a next step. The walkthroughs are operation cards ("press these in this order"); these recipes explain why each step exists and how to adapt it to your own task.
 
 - `run-a-first-loop.md`: run one complete collaboration loop end to end on your own real task; the prepared synthetic case is an optional "watch the flow first" track.
 - `connect-a-tool.md`: wire any AI tool (general chat AI, coding assistant, command-line AI) to the shared contract by copying files into its instruction slot.

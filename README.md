@@ -18,6 +18,7 @@ It makes the work checkable.
 Does your AI keep saying "done" when it is not? This is an **open-source personal AI collaboration workspace** — a thin discipline pack you drop into the AI you already use (Claude, Cursor, Codex, and others). It does not write your code and does not think for you. It does one thing: it makes your AI prove a "done" claim with evidence, gets a second AI to re-check it, and lets you switch tools or pick the work up tomorrow without re-explaining the background. Why a workspace beats a better prompt: [docs/WHY_THIS_EXISTS.md](./docs/WHY_THIS_EXISTS.md). New here? Start at [START_HERE.md](./START_HERE.md).
 
 > Install globally: `npm install -g ai-collab-open-system`, then use the `ai-collab` command everywhere below. If you cloned the source instead, replace `ai-collab` with `node bin/ai-collab.js` in every command.
+> Product name: **DoneTrace**. npm package name: `ai-collab-open-system` for compatibility with existing installs.
 
 中文：你的 AI 是不是老跟你说"搞定了"，其实没做完？这是一套塞进你现有 AI（Claude、Cursor、Codex 等）的开源"协作纪律包"。它不替你写代码、不替你想，只干一件事：让 AI 说"做完了"前先拿证据自证、让另一个 AI 复核一遍、让你换工具或隔天再接着干时不用重讲背景。为什么是工作区而不是提示词，见 docs/WHY_THIS_EXISTS.md；新手从 START_HERE.md 开始。
 
@@ -232,7 +233,7 @@ of itself.
 | **GitHub source release** | Pushed to the public GitHub repo; CI green on the pushed commit. | Yes | (Superseded.) The source went public on GitHub with CI green before the package shipped. |
 | **npm package** | Published to npm via `npm publish`. | **Yes** | `npm install -g ai-collab-open-system` installs the global `ai-collab` command, so every command in this README works as written. |
 
-**The package is published to npm as `ai-collab-open-system` (version 0.1.1), and the global
+**The package is published to npm as `ai-collab-open-system` (version 0.1.2), and the global
 `ai-collab` command is live.** The code, privacy, and packaging checks (`npm test`, `npm run check`,
 `npm pack --dry-run`) all pass, CI is green, and the package is installable from npm. If you would
 rather run from a clone than install globally, `node bin/ai-collab.js <args>` is the same entry.
@@ -257,13 +258,13 @@ This is a **collaboration discipline + state layer**, not a development methodol
 ## Free Async AI Workflow Snapshot
 
 If you want me to diagnose your workflow asynchronously, I’m opening 5 free workflow snapshots.
-Start here: [Request a workflow teardown](https://github.com/aaronyi97/ai-collab-open-system/issues/1).
+Start here: [Request a workflow teardown](https://github.com/aaronyi97/donetrace/issues/1).
 
 ## Contact
 
 - Security issues: see [SECURITY.md](./SECURITY.md) (private channel).
 - General: **X/Twitter** [@AaronYiaazw](https://x.com/AaronYiaazw) · **Email** yi19970319@gmail.com
-- Source & issues: https://github.com/aaronyi97/ai-collab-open-system
+- Source & issues: https://github.com/aaronyi97/donetrace
 
 ---
 
@@ -271,6 +272,6 @@ Start here: [Request a workflow teardown](https://github.com/aaronyi97/ai-collab
 
 - **X / Twitter:** [@AaronYiaazw](https://x.com/AaronYiaazw)
 - **Substack:** [@aaronyi97](https://substack.com/@aaronyi97)
-- **Free Async AI Workflow Snapshot:** [Request a workflow teardown](https://github.com/aaronyi97/ai-collab-open-system/issues/1). Send me one workflow, one failed AI task, or one place where your AI process keeps breaking. I'll tell you where I think it breaks. No live call required.
+- **Free Async AI Workflow Snapshot:** [Request a workflow teardown](https://github.com/aaronyi97/donetrace/issues/1). Send me one workflow, one failed AI task, or one place where your AI process keeps breaking. I'll tell you where I think it breaks. No live call required.
 
 This snapshot is an AI workflow diagnostic. It is not a certified code audit, security audit, or architecture certification.

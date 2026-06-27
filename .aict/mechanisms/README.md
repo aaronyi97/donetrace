@@ -1,6 +1,6 @@
 # Mechanisms
 
-The reusable collaboration moves of the AI Collaboration Open System. Each one is a local-first, public-safe Markdown package you can copy-paste into any AI tool. A mechanism is a self-contained directory with five files:
+The reusable collaboration moves of DoneTrace. Each one is a local-first, public-safe Markdown package you can copy-paste into any AI tool. A mechanism is a self-contained directory with five files:
 
 - `README.md` — what it is, when to use it, and when not to.
 - `PROMPT.md` — the copy-paste prompt that runs it.

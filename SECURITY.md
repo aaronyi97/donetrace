@@ -31,7 +31,7 @@ Ordinary commands are **rarely** affected — narrow false positives are possibl
 Please report security issues **privately** — do not open a public issue or publish exploit details. Use either private channel:
 
 - **GitHub Security Advisory** (preferred): open a draft advisory at
-  https://github.com/aaronyi97/ai-collab-open-system/security/advisories/new
+  https://github.com/aaronyi97/donetrace/security/advisories/new
 - **Email**: yi19970319@gmail.com (X/Twitter: https://x.com/AaronYiaazw)
 
 Please allow a few days for an acknowledgement. This is a local-first tool with no
