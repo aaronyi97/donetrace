@@ -258,6 +258,7 @@ This is a **collaboration discipline + state layer**, not a development methodol
 ## Free Async AI Workflow Snapshot
 
 If you want me to diagnose your workflow asynchronously, I’m opening 5 free workflow snapshots.
+Start here: [Request a workflow teardown](https://github.com/aaronyi97/ai-collab-open-system/issues/1).
 
 ## Contact
 
@@ -271,6 +272,6 @@ If you want me to diagnose your workflow asynchronously, I’m opening 5 free wo
 
 - **X / Twitter:** [@AaronYiaazw](https://x.com/AaronYiaazw)
 - **Substack:** [@aaronyi97](https://substack.com/@aaronyi97)
-- **Free Async AI Workflow Snapshot:** Send me one workflow, one failed AI task, or one place where your AI process keeps breaking. I'll tell you where I think it breaks. No live call required.
+- **Free Async AI Workflow Snapshot:** [Request a workflow teardown](https://github.com/aaronyi97/ai-collab-open-system/issues/1). Send me one workflow, one failed AI task, or one place where your AI process keeps breaking. I'll tell you where I think it breaks. No live call required.
 
 This snapshot is an AI workflow diagnostic. It is not a certified code audit, security audit, or architecture certification.
