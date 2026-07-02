@@ -5,6 +5,7 @@ import { createHash } from "node:crypto";
 import { mkdtempSync, readFileSync, existsSync, mkdirSync, readdirSync, writeFileSync, appendFileSync, cpSync, rmSync, realpathSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { createWorkspace, receiptsLedger, countFiles } from "../src/workspace.js";
 import {
   validateWorkspace,
@@ -38,7 +39,7 @@ import { skillDefinitions, promptDefinitions, mechanismDefinitions, requiredMech
 import { renderSharedCoreContract } from "../src/render.js";
 import { resolveLocale, t, MESSAGES } from "../src/i18n.js";
 
-const repoRoot = path.resolve(new URL("..", import.meta.url).pathname);
+const repoRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const nodeBin = process.execPath;
 
 // i18n: the CLI now resolves its output language from --lang / AI_COLLAB_LANG / the

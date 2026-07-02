@@ -2,6 +2,7 @@
 import { mkdtempSync, readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { createWorkspace } from "../src/workspace.js";
 import { validateWorkspace } from "../src/validate.js";
 
@@ -130,7 +131,7 @@ function makeGeneratedWorkspace() {
   }
 }
 
-const repoRoot = path.resolve(new URL("..", import.meta.url).pathname);
+const repoRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const args = parseArgs(process.argv.slice(2));
 const generatedWorkspace = args.workspace ? null : makeGeneratedWorkspace();
 const workspaces = args.workspace
